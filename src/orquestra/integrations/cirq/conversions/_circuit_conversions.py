@@ -150,8 +150,8 @@ def _cirq_0_11_rotations():
         CirqRx = cirq.Rx
         CirqRy = cirq.Ry
         CirqRz = cirq.Rz
-    except AttributeError:
-        return {}
+    except AttributeError:  # pragma: no cover
+        return {}  # pragma: no cover
 
     return {  # These mappings are needed for cirq 0.11+
         (CirqRx, -0.5): _builtin_gates.RX,
