@@ -9,7 +9,6 @@ from typing import Callable, Dict, Type, Union, overload
 import cirq
 import numpy as np
 import sympy
-
 from zquantum.core.circuits import _builtin_gates, _circuit, _gates
 
 Parameter = Union[sympy.Expr, float]
@@ -145,10 +144,28 @@ EIGENGATE_SPECIAL_CASES = {
     ): _builtin_gates.Z,
 }
 
+
+def _cirq_0_11_rotations():
+    try:
+        CirqRx = cirq.Rx
+        CirqRy = cirq.Ry
+        CirqRz = cirq.Rz
+    except AttributeError:  # pragma: no cover
+        return {}  # pragma: no cover
+
+    return {  # These mappings are needed for cirq 0.11+
+        (CirqRx, -0.5): _builtin_gates.RX,
+        (CirqRy, -0.5): _builtin_gates.RY,
+        (CirqRz, -0.5): _builtin_gates.RZ,
+    }
+
+
 EIGENGATE_ROTATIONS = {
+    **_cirq_0_11_rotations(),
     (cirq.XPowGate, -0.5): _builtin_gates.RX,
     (cirq.YPowGate, -0.5): _builtin_gates.RY,
     (cirq.ZPowGate, -0.5): _builtin_gates.RZ,
+    ##########################################
     (cirq.HPowGate, 0): _builtin_gates.RH,
     (cirq.ZPowGate, 0): _builtin_gates.PHASE,
     (cirq.CZPowGate, 0): _builtin_gates.CPHASE,
