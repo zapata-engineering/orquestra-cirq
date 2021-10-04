@@ -146,9 +146,15 @@ EIGENGATE_SPECIAL_CASES = {
 }
 
 EIGENGATE_ROTATIONS = {
+    # These mappings are needed for cirq 0.11+
+    (cirq.Rx, -0.5): _builtin_gates.RX,
+    (cirq.Ry, -0.5): _builtin_gates.RY,
+    (cirq.Rz, -0.5): _builtin_gates.RZ,
+    # These mappings are needed for cirq <0.11
     (cirq.XPowGate, -0.5): _builtin_gates.RX,
     (cirq.YPowGate, -0.5): _builtin_gates.RY,
     (cirq.ZPowGate, -0.5): _builtin_gates.RZ,
+    ##########################################
     (cirq.HPowGate, 0): _builtin_gates.RH,
     (cirq.ZPowGate, 0): _builtin_gates.PHASE,
     (cirq.CZPowGate, 0): _builtin_gates.CPHASE,

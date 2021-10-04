@@ -118,7 +118,10 @@ class TestGateConversion:
 )
 def test_importing_gate_in_power_form_gives_expected_gate(zquantum_gate, cirq_gate):
     pow_gate = cirq_gate ** 1.0
-    if "PowGate" not in str(type(pow_gate)):
+
+    cirq_major_version = eval(".".join(cirq.__version__.split(".")[:2]))
+
+    if cirq_major_version < 0.11 and "PowGate" not in str(type(pow_gate)):
         raise TypeError(
             f"This test expects power gates. Generated {type(pow_gate)} instead"
         )
