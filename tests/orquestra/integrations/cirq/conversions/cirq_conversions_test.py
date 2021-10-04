@@ -2,13 +2,13 @@ import cirq
 import numpy as np
 import pytest
 import sympy
-from zquantum.core.circuits import _builtin_gates, _circuit, _gates
-
+from packaging.version import parse
 from qecirq.conversions._circuit_conversions import (
     export_to_cirq,
     import_from_cirq,
     make_rotation_factory,
 )
+from zquantum.core.circuits import _builtin_gates, _circuit, _gates
 
 # --------- gates ---------
 
@@ -119,9 +119,10 @@ class TestGateConversion:
 def test_importing_gate_in_power_form_gives_expected_gate(zquantum_gate, cirq_gate):
     pow_gate = cirq_gate ** 1.0
 
-    cirq_major_version = eval(".".join(cirq.__version__.split(".")[:2]))
+    cirq_current_version = parse(cirq.__version__)
+    cirq_upper_bound = parse("0.11")
 
-    if cirq_major_version < 0.11 and "PowGate" not in str(type(pow_gate)):
+    if cirq_current_version < cirq_upper_bound and "PowGate" not in str(type(pow_gate)):
         raise TypeError(
             f"This test expects power gates. Generated {type(pow_gate)} instead"
         )
