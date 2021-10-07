@@ -190,10 +190,7 @@ class CirqSimulator(QuantumSimulator):
         """
         super().get_wavefunction(circuit)
 
-        amplitudes = export_to_cirq(circuit).final_state_vector()
-        wavefunction = flip_wavefunction(Wavefunction(amplitudes))
-
-        return wavefunction
+        return Wavefunction(export_to_cirq(circuit).final_state_vector())
 
 
 def get_measurement_from_cirq_result_object(result_object, n_qubits, n_samples):
