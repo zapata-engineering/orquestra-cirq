@@ -6,7 +6,7 @@ import numpy as np
 from openfermion import get_sparse_operator
 from qecirq.conversions import export_to_cirq
 from zquantum.core.circuits import Circuit
-from zquantum.core.interfaces.backend import QuantumSimulator
+from zquantum.core.interfaces.backend import QuantumSimulator, StateVector
 from zquantum.core.measurement import (
     ExpectationValues,
     Measurements,
@@ -181,8 +181,8 @@ class CirqSimulator(QuantumSimulator):
         return expectation_values_to_real(ExpectationValues(np.asarray(values)))
 
     def _get_wavefunction_from_native_circuit(
-        self, circuit: Circuit, initial_state
-    ) -> Wavefunction:
+        self, circuit: Circuit, initial_state: StateVector
+    ) -> StateVector:
         return export_to_cirq(circuit).final_state_vector(initial_state=initial_state)
 
 
