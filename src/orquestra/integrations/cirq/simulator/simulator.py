@@ -180,17 +180,10 @@ class CirqSimulator(QuantumSimulator):
                     values.append(expectation_value)
         return expectation_values_to_real(ExpectationValues(np.asarray(values)))
 
-    def get_wavefunction(self, circuit: Circuit):
-        """Run a circuit and get the wavefunction of the resulting statevector.
-
-        Args:
-            circuit: the circuit to prepare the state
-        Returns:
-            wavefunction: The wavefunction representing the final state of the circuit
-        """
-        super().get_wavefunction(circuit)
-
-        return Wavefunction(export_to_cirq(circuit).final_state_vector())
+    def _get_wavefunction_from_native_circuit(
+        self, circuit: Circuit, initial_state
+    ) -> Wavefunction:
+        return export_to_cirq(circuit).final_state_vector(initial_state=initial_state)
 
 
 def get_measurement_from_cirq_result_object(result_object, n_qubits, n_samples):
