@@ -1,8 +1,8 @@
 import unittest
-from cirq import X, Y, Z
-from cirq import GridQubit, LineQubit, PauliString, PauliSum
-from qecirq.conversions import qubitop_to_paulisum
+
+from cirq import GridQubit, LineQubit, PauliString, PauliSum, X, Y, Z
 from openfermion import QubitOperator
+from qecirq.conversions import qubitop_to_paulisum
 
 
 class TestQubitOperator(unittest.TestCase):

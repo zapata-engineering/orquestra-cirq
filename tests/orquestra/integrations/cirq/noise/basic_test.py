@@ -1,15 +1,16 @@
+import json
+import os
+
+import cirq
 import pytest
 from qecirq.noise.basic import (
-    get_depolarizing_channel,
-    get_asymmetric_depolarize,
     get_amplitude_damping,
+    get_asymmetric_depolarize,
+    get_depolarizing_channel,
     get_phase_damping,
     load_noise_model_from_json,
     save_cirq_noise_model,
 )
-import cirq
-import json
-import os
 
 
 def remove_file_if_exists(filename):

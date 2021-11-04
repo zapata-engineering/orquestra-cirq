@@ -1,5 +1,5 @@
 import sys
-from typing import cast, List
+from typing import List, cast
 
 import cirq
 import numpy as np

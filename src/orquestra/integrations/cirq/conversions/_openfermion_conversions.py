@@ -1,5 +1,6 @@
-import cirq
 from typing import List, Union
+
+import cirq
 from openfermion import QubitOperator, count_qubits
 
 

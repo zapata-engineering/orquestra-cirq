@@ -1,9 +1,16 @@
-from cirq import depolarize, asymmetric_depolarize, amplitude_damp, phase_damp
-from cirq import to_json, read_json
-import numpy as np
-from typing import Dict, Union
-from zquantum.core.utils import save_noise_model
 import json
+from typing import Dict, Union
+
+import numpy as np
+from cirq import (
+    amplitude_damp,
+    asymmetric_depolarize,
+    depolarize,
+    phase_damp,
+    read_json,
+    to_json,
+)
+from zquantum.core.utils import save_noise_model
 
 
 def get_depolarizing_channel(T, t_gate=10e-9):
