@@ -1,5 +1,5 @@
 import sys
-from typing import List
+from typing import List, cast
 
 import cirq
 import numpy as np
@@ -161,7 +161,7 @@ class CirqSimulator(QuantumSimulator):
                 "Please provide noise model to get exact noisy expectation values"
             )
         else:
-            cirq_circuit = export_to_cirq(circuit)
+            cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
             values = []
 
             for pauli_term in qubit_operator:
@@ -183,7 +183,8 @@ class CirqSimulator(QuantumSimulator):
     def _get_wavefunction_from_native_circuit(
         self, circuit: Circuit, initial_state: StateVector
     ) -> StateVector:
-        return export_to_cirq(circuit).final_state_vector(initial_state=initial_state)
+        cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
+        return cirq_circuit.final_state_vector(initial_state=initial_state)
 
 
 def get_measurement_from_cirq_result_object(result_object, n_qubits, n_samples):

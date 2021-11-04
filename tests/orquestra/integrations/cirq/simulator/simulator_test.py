@@ -112,8 +112,8 @@ class TestCirqSimulator(QuantumSimulatorTests):
         expectation_values = simulator.get_exact_noisy_expectation_values(
             circuit, qubit_operator
         )
-        assert expectation_values.values[0] == target_values[0]
-        assert expectation_values.values[1] == target_values[1]
+        np.testing.assert_almost_equal(expectation_values.values[0], target_values[0])
+        np.testing.assert_almost_equal(expectation_values.values[1], target_values[1])
 
     def test_run_circuit_and_measure_seed(self):
         # Given
