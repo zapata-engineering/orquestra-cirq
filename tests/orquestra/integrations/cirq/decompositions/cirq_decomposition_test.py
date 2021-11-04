@@ -1,12 +1,9 @@
 import cirq
 import numpy as np
 import pytest
-from zquantum.core.circuits import GateOperation
-from qecirq.decompositions import (
-    PowerGateToPhaseAndRotation,
-    decompose_cirq_circuit,
-)
 from qecirq.conversions import import_from_cirq
+from qecirq.decompositions import PowerGateToPhaseAndRotation, decompose_cirq_circuit
+from zquantum.core.circuits import GateOperation
 
 
 class TestDecompositionOfPowerGates:

@@ -1,9 +1,16 @@
-from cirq import depolarize, asymmetric_depolarize, amplitude_damp, phase_damp
-from cirq import to_json, read_json
-import numpy as np
-from typing import Dict, Union
-from zquantum.core.utils import save_noise_model
 import json
+from typing import Dict, Union
+
+import numpy as np
+from cirq import (
+    amplitude_damp,
+    asymmetric_depolarize,
+    depolarize,
+    phase_damp,
+    read_json,
+    to_json,
+)
+from zquantum.core.utils import save_noise_model
 
 
 def get_depolarizing_channel(T, t_gate=10e-9):
@@ -21,16 +28,16 @@ def get_depolarizing_channel(T, t_gate=10e-9):
     return noise_model
 
 
-def get_asymmetric_depolarize(T_1, T_2, t_gate=10e-9):
+def get_asymmetric_depolarize(T_1: float, T_2: float, t_gate: float = 10e-9):
     """Creates a noise model that does both phase and amplitude damping but in the
         Pauli Twirling Approximation discussed in the following reference
         https://arxiv.org/pdf/1305.2021.pdf
 
 
     Args:
-        T_1 (float) : Relaxation time (seconds)
-        T_2 (float) : dephasing time (seconds)
-        t_gate (float) : Discretized time step over which the relaxation occurs over (seconds)
+        T_1: Relaxation time (seconds)
+        T_2: dephasing time (seconds)
+        t_gate: Discretized time step over which the relaxation occurs over (seconds)
 
     """
     assert T_1 > 0
@@ -63,12 +70,12 @@ def get_asymmetric_depolarize(T_1, T_2, t_gate=10e-9):
     return noise_model
 
 
-def get_amplitude_damping(T_1, t_gate=10e-9):
+def get_amplitude_damping(T_1: float, t_gate: float = 10e-9):
     """Creates an amplitude damping noise model
 
     Args:
-        T_1 (float) : Relaxation time (seconds)
-        t_gate (float) : Discretized time step over which the relaxation occurs over (seconds)
+        T_1: Relaxation time (seconds)
+        t_gate: Discretized time step over which the relaxation occurs over (seconds)
 
     """
     assert T_1 > 0
@@ -79,12 +86,12 @@ def get_amplitude_damping(T_1, t_gate=10e-9):
     return noise_model
 
 
-def get_phase_damping(T_2, t_gate=10e-9):
+def get_phase_damping(T_2: float, t_gate: float = 10e-9):
     """Creates a dephasing noise model
 
     Args:
-        T_2 (float) : dephasing time (seconds)
-        t_gate (float) : Discretized time step over which the relaxation occurs over (seconds)
+        T_2: dephasing time (seconds)
+        t_gate: Discretized time step over which the relaxation occurs over (seconds)
 
     """
     assert T_2 > 0

@@ -50,7 +50,7 @@ class PowerGateToPhaseAndRotation(DecompositionRule[cirq.Operation]):
     def production(self, operation: cirq.Operation) -> Iterable[cirq.Operation]:
         target_qubit = operation.qubits[0]
         original_gate = cast(cirq.EigenGate, operation.gate)
-        rotation_type = type(operation.gate)
+        rotation_type = type(original_gate)
         phase_exponent = (original_gate.global_shift + 0.5) * original_gate.exponent
         return [
             # Global phase, equivalent to Identity*exp((global_shift+0.5)*exponent)
