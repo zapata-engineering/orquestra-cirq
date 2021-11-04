@@ -46,7 +46,7 @@ def test_get_depolarizing_channel(T, t_gate):
 )
 def test_get_depolarizing_channel_fails_with_unphysical_values(T, t_gate):
     with pytest.raises(AssertionError):
-        noise_model = get_depolarizing_channel(T, t_gate)
+        _ = get_depolarizing_channel(T, t_gate)
 
 
 # Testing PTA noise model
@@ -75,7 +75,7 @@ def test_get_get_asymmetric_depolarize(T_1, T_2, t_gate):
 )
 def test_get_asymmetric_depolarize_fails_with_unphysical_values(T_1, T_2, t_gate):
     with pytest.raises(AssertionError):
-        noise_model = get_asymmetric_depolarize(T_1, T_2, t_gate)
+        _ = get_asymmetric_depolarize(T_1, T_2, t_gate)
 
 
 # Testing amplitude damping model
@@ -105,7 +105,7 @@ def test_get_amplitude_damping(T_1, t_gate):
 )
 def test_get_amplitude_damping_fails_with_unphysical_values(T_1, t_gate):
     with pytest.raises(AssertionError):
-        noise_model = get_amplitude_damping(T_1, t_gate)
+        _ = get_amplitude_damping(T_1, t_gate)
 
 
 # Testing dephasing model
@@ -135,7 +135,7 @@ def test_get_phase_damping(T_2, t_gate):
 )
 def test_get_phase_damping_fails_with_unphysical_values(T_2, t_gate):
     with pytest.raises(AssertionError):
-        noise_model = get_phase_damping(T_2, t_gate)
+        _ = get_phase_damping(T_2, t_gate)
 
 
 @pytest.mark.parametrize(
