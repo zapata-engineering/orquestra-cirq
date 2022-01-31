@@ -1,4 +1,4 @@
-from typing import Iterable, cast
+from typing import Iterable, Sequence, cast
 
 import cirq
 from zquantum.core.decompositions._decomposition import (
@@ -67,7 +67,7 @@ class PowerGateToPhaseAndRotation(DecompositionRule[cirq.Operation]):
 
 def decompose_cirq_circuit(
     circuit: cirq.Circuit,
-    decomposition_rules: Iterable[DecompositionRule[cirq.Operation]],
+    decomposition_rules: Sequence[DecompositionRule[cirq.Operation]],
 ):
     return cirq.Circuit(
         decompose_operations(circuit.all_operations(), decomposition_rules)

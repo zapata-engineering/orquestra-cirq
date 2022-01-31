@@ -1,5 +1,5 @@
 import sys
-from typing import List, cast
+from typing import List, Sequence, cast
 
 import cirq
 import numpy as np
@@ -12,7 +12,6 @@ from zquantum.core.measurement import (
     Measurements,
     expectation_values_to_real,
 )
-from zquantum.core.wavefunction import Wavefunction
 
 
 def _prepare_measurable_cirq_circuit(circuit, noise_model):
@@ -76,7 +75,7 @@ class CirqSimulator(QuantumSimulator):
         return measurement
 
     def run_circuitset_and_measure(
-        self, circuitset: List[Circuit], n_samples: List[int]
+        self, circuitset: Sequence[Circuit], n_samples: Sequence[int]
     ):
         """Run a set of circuits and measure a certain number of bitstrings.
 
@@ -184,7 +183,9 @@ class CirqSimulator(QuantumSimulator):
         self, circuit: Circuit, initial_state: StateVector
     ) -> StateVector:
         cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
-        return cirq_circuit.final_state_vector(initial_state=initial_state)
+        return cirq_circuit.final_state_vector(
+            initial_state=cast(cirq.STATE_VECTOR_LIKE, initial_state)
+        )
 
 
 def get_measurement_from_cirq_result_object(result_object, n_qubits, n_samples):
