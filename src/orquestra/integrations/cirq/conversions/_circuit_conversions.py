@@ -10,8 +10,8 @@ import cirq
 import numpy as np
 import sympy
 from zquantum.core.circuits import _builtin_gates, _circuit, _gates
+from zquantum.core.typing import Parameter
 
-Parameter = Union[sympy.Expr, float]
 RotationGateFactory = Callable[[Parameter], cirq.EigenGate]
 
 
