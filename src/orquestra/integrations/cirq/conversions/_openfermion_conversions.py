@@ -1,7 +1,7 @@
 from typing import List, Union
 
 import cirq
-from openfermion import QubitOperator, count_qubits
+from zquantum.core.openfermion import QubitOperator, count_qubits
 
 
 def qubitop_to_paulisum(
