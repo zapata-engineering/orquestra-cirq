@@ -11,7 +11,11 @@ from zquantum.core.measurement import (
     Measurements,
     expectation_values_to_real,
 )
-from zquantum.core.openfermion import QubitOperator, get_sparse_operator
+from zquantum.core.openfermion import (
+    QubitOperator,
+    SymbolicOperator,
+    get_sparse_operator,
+)
 
 
 def _prepare_measurable_cirq_circuit(circuit, noise_model):
@@ -107,7 +111,7 @@ class CirqSimulator(QuantumSimulator):
         return measurements_set
 
     def get_exact_expectation_values(
-        self, circuit: Circuit, qubit_operator: QubitOperator
+        self, circuit: Circuit, qubit_operator: SymbolicOperator
     ) -> ExpectationValues:
         """Compute exact expectation values with respect to given operator.
 
@@ -144,7 +148,7 @@ class CirqSimulator(QuantumSimulator):
             return expectation_values_to_real(ExpectationValues(np.asarray(values)))
 
     def get_exact_noisy_expectation_values(
-        self, circuit: Circuit, qubit_operator: QubitOperator
+        self, circuit: Circuit, qubit_operator: SymbolicOperator
     ) -> ExpectationValues:
         """Compute exact expectation values w.r.t. given operator in presence of noise.
 
