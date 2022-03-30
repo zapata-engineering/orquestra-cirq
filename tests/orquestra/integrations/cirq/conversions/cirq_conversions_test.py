@@ -117,7 +117,7 @@ class TestGateConversion:
     ],
 )
 def test_importing_gate_in_power_form_gives_expected_gate(zquantum_gate, cirq_gate):
-    pow_gate = cirq_gate ** 1.0
+    pow_gate = cirq_gate**1.0
 
     cirq_current_version = parse(cirq.__version__)
     cirq_upper_bound = parse("0.11")
@@ -192,15 +192,12 @@ class CustomGate(cirq.Gate):
         return 1
 
     def _unitary_(self):
-        return (
-            np.array(
-                [
-                    [np.cos(self.theta), np.sin(self.theta)],
-                    [np.sin(self.theta), -np.cos(self.theta)],
-                ]
-            )
-            / np.sqrt(2)
-        )
+        return np.array(
+            [
+                [np.cos(self.theta), np.sin(self.theta)],
+                [np.sin(self.theta), -np.cos(self.theta)],
+            ]
+        ) / np.sqrt(2)
 
     def _circuit_diagram_info_(self, args):
         return f"R({self.theta})"
