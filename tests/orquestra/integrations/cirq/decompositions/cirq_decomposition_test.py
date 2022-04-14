@@ -92,9 +92,9 @@ class TestDecompositionOfPowerGates:
             (
                 PowerGateToPhaseAndRotation(cirq.XPowGate),
                 [
-                    (cirq.X ** 1).on(cirq.LineQubit(3)),
-                    (cirq.Y ** 2).on(cirq.LineQubit(1)),
-                    (cirq.Z ** 1).on(cirq.LineQubit(0)),
+                    (cirq.X**1).on(cirq.LineQubit(3)),
+                    (cirq.Y**2).on(cirq.LineQubit(1)),
+                    (cirq.Z**1).on(cirq.LineQubit(0)),
                 ],
             ),
             (

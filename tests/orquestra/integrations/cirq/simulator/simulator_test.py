@@ -1,13 +1,13 @@
 import numpy as np
 import pytest
 from cirq import depolarize
-from openfermion.ops import QubitOperator
 from qecirq.simulator import CirqSimulator
 from zquantum.core.circuits import CNOT, Circuit, H, X
 from zquantum.core.interfaces.backend_test import (
     QuantumSimulatorGatesTest,
     QuantumSimulatorTests,
 )
+from zquantum.core.openfermion.ops import QubitOperator
 
 
 @pytest.fixture()

@@ -3,7 +3,6 @@ from typing import List, Sequence, cast
 
 import cirq
 import numpy as np
-from openfermion import get_sparse_operator
 from qecirq.conversions import export_to_cirq
 from zquantum.core.circuits import Circuit
 from zquantum.core.interfaces.backend import QuantumSimulator, StateVector
@@ -11,6 +10,11 @@ from zquantum.core.measurement import (
     ExpectationValues,
     Measurements,
     expectation_values_to_real,
+)
+from zquantum.core.openfermion import (
+    QubitOperator,
+    SymbolicOperator,
+    get_sparse_operator,
 )
 
 
@@ -51,7 +55,7 @@ class CirqSimulator(QuantumSimulator):
         else:
             self.simulator = cirq.Simulator(seed=seed)
 
-    def run_circuit_and_measure(self, circuit: Circuit, n_samples=None):
+    def run_circuit_and_measure(self, circuit: Circuit, n_samples=None) -> Measurements:
         """Run a circuit and measure a certain number of bitstrings.
 
         Args:
@@ -76,7 +80,7 @@ class CirqSimulator(QuantumSimulator):
 
     def run_circuitset_and_measure(
         self, circuitset: Sequence[Circuit], n_samples: Sequence[int]
-    ):
+    ) -> List[Measurements]:
         """Run a set of circuits and measure a certain number of bitstrings.
 
         Args:
@@ -106,7 +110,9 @@ class CirqSimulator(QuantumSimulator):
 
         return measurements_set
 
-    def get_exact_expectation_values(self, circuit: Circuit, qubit_operator):
+    def get_exact_expectation_values(
+        self, circuit: Circuit, qubit_operator: SymbolicOperator
+    ) -> ExpectationValues:
         """Compute exact expectation values with respect to given operator.
 
         Args:
@@ -141,7 +147,9 @@ class CirqSimulator(QuantumSimulator):
 
             return expectation_values_to_real(ExpectationValues(np.asarray(values)))
 
-    def get_exact_noisy_expectation_values(self, circuit: Circuit, qubit_operator):
+    def get_exact_noisy_expectation_values(
+        self, circuit: Circuit, qubit_operator: SymbolicOperator
+    ) -> ExpectationValues:
         """Compute exact expectation values w.r.t. given operator in presence of noise.
 
         Note that this method can be used only if simulator's noise_model is not set
@@ -188,7 +196,9 @@ class CirqSimulator(QuantumSimulator):
         )
 
 
-def get_measurement_from_cirq_result_object(result_object, n_qubits, n_samples):
+def get_measurement_from_cirq_result_object(
+    result_object: cirq.Result, n_qubits: int, n_samples: int
+) -> Measurements:
     """Extract measurement bitstrings from cirq result object.
 
     Args:
