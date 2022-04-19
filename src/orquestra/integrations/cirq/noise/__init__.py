@@ -1,3 +1,6 @@
+################################################################################
+# © Copyright 2021 Zapata Computing Inc.
+################################################################################
 from .basic import (
     get_amplitude_damping,
     get_asymmetric_depolarize,
