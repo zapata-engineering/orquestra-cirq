@@ -1,3 +1,6 @@
+################################################################################
+# © Copyright 2021-2022 Zapata Computing Inc.
+################################################################################
 """Zquantum <-> Cirq conversions."""
 import hashlib
 from dataclasses import dataclass
