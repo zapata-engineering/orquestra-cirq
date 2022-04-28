@@ -12,8 +12,8 @@ from typing import Callable, Dict, Type, Union, overload
 import cirq
 import numpy as np
 import sympy
-from zquantum.core.circuits import _builtin_gates, _circuit, _gates
-from zquantum.core.typing import Parameter
+from orquestra.quantum.circuits import _builtin_gates, _circuit, _gates
+from orquestra.quantum.typing import Parameter
 
 RotationGateFactory = Callable[[Parameter], cirq.EigenGate]
 

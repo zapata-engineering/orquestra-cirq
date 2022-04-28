@@ -11,9 +11,7 @@ from cirq import (
     depolarize,
     phase_damp,
     read_json,
-    to_json,
 )
-from zquantum.core.utils import save_noise_model
 
 
 def get_depolarizing_channel(T, t_gate=10e-9):
@@ -124,10 +122,3 @@ def load_noise_model_from_json(serialized_model: Union[Dict, str]):
 
     noise_model = read_json(json_text=serialized_model)
     return noise_model
-
-
-def save_cirq_noise_model(noise_model, filename):
-    noise_model_data = to_json(noise_model)
-    save_noise_model(
-        noise_model_data, "qecirq.noise", "load_noise_model_from_json", filename
-    )

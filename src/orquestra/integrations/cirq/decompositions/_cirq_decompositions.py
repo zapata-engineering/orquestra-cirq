@@ -4,7 +4,7 @@
 from typing import Iterable, Sequence, cast
 
 import cirq
-from zquantum.core.decompositions._decomposition import (
+from orquestra.quantum.decompositions._decomposition import (
     DecompositionRule,
     decompose_operations,
 )

@@ -5,13 +5,14 @@ import cirq
 import numpy as np
 import pytest
 import sympy
+from orquestra.quantum.circuits import _builtin_gates, _circuit, _gates
 from packaging.version import parse
-from qecirq.conversions._circuit_conversions import (
+
+from orquestra.integrations.cirq.conversions._circuit_conversions import (
     export_to_cirq,
     import_from_cirq,
     make_rotation_factory,
 )
-from zquantum.core.circuits import _builtin_gates, _circuit, _gates
 
 # --------- gates ---------
 

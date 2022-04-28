@@ -4,13 +4,14 @@
 import numpy as np
 import pytest
 from cirq import depolarize
-from qecirq.simulator import CirqSimulator
-from zquantum.core.circuits import CNOT, Circuit, H, X
-from zquantum.core.interfaces.backend_test import (
+from orquestra.quantum.api.backend_test import (
     QuantumSimulatorGatesTest,
     QuantumSimulatorTests,
 )
-from zquantum.core.openfermion.ops import QubitOperator
+from orquestra.quantum.circuits import CNOT, Circuit, H, X
+from orquestra.quantum.openfermion.ops import QubitOperator
+
+from orquestra.integrations.cirq.simulator import CirqSimulator
 
 
 @pytest.fixture()

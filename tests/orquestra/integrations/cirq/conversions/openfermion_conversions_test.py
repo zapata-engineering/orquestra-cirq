@@ -4,8 +4,9 @@
 import unittest
 
 from cirq import GridQubit, LineQubit, PauliString, PauliSum, X, Y, Z
-from qecirq.conversions import qubitop_to_paulisum
-from zquantum.core.openfermion import QubitOperator
+from orquestra.quantum.openfermion import QubitOperator
+
+from orquestra.integrations.cirq.conversions import qubitop_to_paulisum
 
 
 class TestQubitOperator(unittest.TestCase):

@@ -6,13 +6,13 @@ import os
 
 import cirq
 import pytest
-from qecirq.noise.basic import (
+
+from orquestra.integrations.cirq.noise.basic import (
     get_amplitude_damping,
     get_asymmetric_depolarize,
     get_depolarizing_channel,
     get_phase_damping,
     load_noise_model_from_json,
-    save_cirq_noise_model,
 )
 
 
@@ -152,20 +152,3 @@ def test_get_phase_damping_fails_with_unphysical_values(T_2, t_gate):
 def test_load_noise_model_from_json(serialized_model):
     noise_model = load_noise_model_from_json(serialized_model)
     assert isinstance(noise_model, cirq.ops.DepolarizingChannel)
-
-
-def test_save_noise_model():
-    noise_model = get_phase_damping(10e-6, 10e-9)
-    filename = "phase_damping.json"
-    try:
-        save_cirq_noise_model(noise_model, filename)
-
-        assert os.path.exists(filename)
-        with open(filename, "r") as f:
-            data = json.loads(f.read())
-
-        assert data["module_name"] == "qecirq.noise"
-        assert data["function_name"] == "load_noise_model_from_json"
-        assert data["data"] == cirq.to_json(noise_model)
-    finally:
-        remove_file_if_exists(filename)

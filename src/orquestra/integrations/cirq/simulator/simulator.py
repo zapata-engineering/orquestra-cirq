@@ -6,19 +6,16 @@ from typing import List, Sequence, cast
 
 import cirq
 import numpy as np
-from qecirq.conversions import export_to_cirq
-from zquantum.core.circuits import Circuit
-from zquantum.core.interfaces.backend import QuantumSimulator, StateVector
-from zquantum.core.measurement import (
+from orquestra.quantum.api.backend import QuantumSimulator, StateVector
+from orquestra.quantum.circuits import Circuit
+from orquestra.quantum.measurements import (
     ExpectationValues,
     Measurements,
     expectation_values_to_real,
 )
-from zquantum.core.openfermion import (
-    QubitOperator,
-    SymbolicOperator,
-    get_sparse_operator,
-)
+from orquestra.quantum.openfermion import SymbolicOperator, get_sparse_operator
+
+from ..conversions import export_to_cirq
 
 
 def _prepare_measurable_cirq_circuit(circuit, noise_model):
