@@ -86,7 +86,7 @@ def _is_scaled_identity(matrix: np.ndarray):
 
 
 @pytest.mark.parametrize(
-    "zquantum_gate,cirq_gate",
+    "orquestra_gate,cirq_gate",
     [
         *EQUIVALENT_IDENTITY_GATES,
         *EQUIVALENT_NON_PARAMETRIC_GATES,
@@ -95,32 +95,32 @@ def _is_scaled_identity(matrix: np.ndarray):
     ],
 )
 class TestGateConversion:
-    def test_matrices_of_corresponding_zquantum_and_cirq_gates_are_equal(
-        self, zquantum_gate, cirq_gate
+    def test_matrices_of_corresponding_orquestra_and_cirq_gates_are_equal(
+        self, orquestra_gate, cirq_gate
     ):
-        zquantum_matrix = np.array(zquantum_gate.matrix).astype(np.complex128)
+        orquestra_matrix = np.array(orquestra_gate.matrix).astype(np.complex128)
 
         assert _is_scaled_identity(
-            zquantum_matrix @ np.linalg.inv(cirq.unitary(cirq_gate))
+            orquestra_matrix @ np.linalg.inv(cirq.unitary(cirq_gate))
         )
 
-    def test_exporting_gate_to_cirq_gives_expected_gate(self, zquantum_gate, cirq_gate):
-        assert export_to_cirq(zquantum_gate) == cirq_gate
+    def test_exporting_gate_to_cirq_gives_expected_gate(self, orquestra_gate, cirq_gate):
+        assert export_to_cirq(orquestra_gate) == cirq_gate
 
     def test_importing_gate_from_cirq_gives_expected_gate(
-        self, zquantum_gate, cirq_gate
+        self, orquestra_gate, cirq_gate
     ):
-        assert import_from_cirq(cirq_gate) == zquantum_gate
+        assert import_from_cirq(cirq_gate) == orquestra_gate
 
 
 @pytest.mark.parametrize(
-    "zquantum_gate,cirq_gate",
+    "orquestra_gate,cirq_gate",
     [
         *EQUIVALENT_NON_PARAMETRIC_GATES,
         *EQUIVALENT_PARAMETRIC_GATES,
     ],
 )
-def test_importing_gate_in_power_form_gives_expected_gate(zquantum_gate, cirq_gate):
+def test_importing_gate_in_power_form_gives_expected_gate(orquestra_gate, cirq_gate):
     pow_gate = cirq_gate**1.0
 
     cirq_current_version = parse(cirq.__version__)
@@ -131,7 +131,7 @@ def test_importing_gate_in_power_form_gives_expected_gate(zquantum_gate, cirq_ga
             f"This test expects power gates. Generated {type(pow_gate)} instead"
         )
 
-    assert import_from_cirq(pow_gate) == zquantum_gate
+    assert import_from_cirq(pow_gate) == orquestra_gate
 
 
 # circuits ---------
@@ -227,22 +227,22 @@ UNSUPPORTED_CIRQ_CIRCUITS = [
 
 
 class TestExportingToCirq:
-    @pytest.mark.parametrize("zquantum_circuit,cirq_circuit", EQUIVALENT_CIRCUITS)
+    @pytest.mark.parametrize("orquestra_circuit,cirq_circuit", EQUIVALENT_CIRCUITS)
     def test_exporting_circuit_gives_equivalent_circuit(
-        self, zquantum_circuit, cirq_circuit
+        self, orquestra_circuit, cirq_circuit
     ):
-        converted = export_to_cirq(zquantum_circuit)
+        converted = export_to_cirq(orquestra_circuit)
         assert (
             converted == cirq_circuit
         ), f"Converted circuit:\n{converted}\n isn't equal to\n{cirq_circuit}"
 
     @pytest.mark.parametrize(
-        "zquantum_circuit, cirq_circuit", EQUIVALENT_PARAMETRIZED_CIRCUITS
+        "orquestra_circuit, cirq_circuit", EQUIVALENT_PARAMETRIZED_CIRCUITS
     )
     def test_exporting_and_binding_parametrized_circuit_results_in_equivalent_circuit(
-        self, zquantum_circuit, cirq_circuit
+        self, orquestra_circuit, cirq_circuit
     ):
-        converted = export_to_cirq(zquantum_circuit)
+        converted = export_to_cirq(orquestra_circuit)
         converted_bound = cirq.resolve_parameters(converted, EXAMPLE_PARAM_VALUES)
         ref_bound = cirq.resolve_parameters(cirq_circuit, EXAMPLE_PARAM_VALUES)
         assert (
@@ -250,12 +250,12 @@ class TestExportingToCirq:
         ), f"Converted circuit:\n{converted_bound}\n isn't equal to\n{ref_bound}"
 
     @pytest.mark.parametrize(
-        "zquantum_circuit, cirq_circuit", EQUIVALENT_PARAMETRIZED_CIRCUITS
+        "orquestra_circuit, cirq_circuit", EQUIVALENT_PARAMETRIZED_CIRCUITS
     )
     def test_binding_and_exporting_parametrized_circuit_results_in_equivalent_circuit(
-        self, zquantum_circuit, cirq_circuit
+        self, orquestra_circuit, cirq_circuit
     ):
-        bound = zquantum_circuit.bind(EXAMPLE_PARAM_VALUES)
+        bound = orquestra_circuit.bind(EXAMPLE_PARAM_VALUES)
         bound_converted = export_to_cirq(bound)
         ref_bound = cirq.resolve_parameters(
             cirq_circuit, {**EXAMPLE_PARAM_VALUES, sympy.pi: 3.14}
@@ -265,25 +265,25 @@ class TestExportingToCirq:
         ), f"Converted circuit:\n{bound_converted}\n isn't equal to\n{ref_bound}"
 
     @pytest.mark.parametrize(
-        "zquantum_circuit, cirq_circuit", EQUIVALENT_PARAMETRIZED_CIRCUITS
+        "orquestra_circuit, cirq_circuit", EQUIVALENT_PARAMETRIZED_CIRCUITS
     )
     def test_importing_supported_gates_keeps_free_symbols(
-        self, zquantum_circuit, cirq_circuit
+        self, orquestra_circuit, cirq_circuit
     ):
         circuit = import_from_cirq(cirq_circuit)
 
-        assert circuit.free_symbols == zquantum_circuit.free_symbols
+        assert circuit.free_symbols == orquestra_circuit.free_symbols
 
     def test_daggers_are_converted_to_inverses(self):
         # NOTE: We don't add this test case to EQUIVALENT_CIRCUITS, because
-        # only Zquantum -> cirq conversion is supported.
-        zquantum_circuit = _circuit.Circuit(
+        # only orquestra -> cirq conversion is supported.
+        orquestra_circuit = _circuit.Circuit(
             [_builtin_gates.X.dagger(2), _builtin_gates.T.dagger(1)]
         )
         cirq_circuit = cirq.Circuit(
             [cirq.inverse(cirq.X)(lq(2)), cirq.inverse(cirq.T)(lq(1))]
         )
-        converted = export_to_cirq(zquantum_circuit)
+        converted = export_to_cirq(orquestra_circuit)
 
         assert converted == cirq_circuit, (
             f"Converted circuit:\n{converted}\n isn't equal " f"to\n{cirq_circuit}"
@@ -299,10 +299,10 @@ def _is_a_builtin_gate(gate: _gates.Gate):
 
 
 class TestImportingFromCirq:
-    @pytest.mark.parametrize("zquantum_circuit, cirq_circuit", EQUIVALENT_CIRCUITS)
-    def test_gives_equivalent_circuit(self, zquantum_circuit, cirq_circuit):
+    @pytest.mark.parametrize("orquestra_circuit, cirq_circuit", EQUIVALENT_CIRCUITS)
+    def test_gives_equivalent_circuit(self, orquestra_circuit, cirq_circuit):
         imported = import_from_cirq(cirq_circuit)
-        assert imported == zquantum_circuit
+        assert imported == orquestra_circuit
 
     @pytest.mark.parametrize("cirq_circuit", CIRQ_ONLY_CIRCUITS)
     def test_with_cirq_only_gates_returns_custom_gates(self, cirq_circuit):

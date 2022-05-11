@@ -1,7 +1,6 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
-"""Zquantum <-> Cirq conversions."""
 import hashlib
 from dataclasses import dataclass
 from functools import singledispatch
@@ -89,7 +88,7 @@ def _cirq_u3_factory(*args):
     return cirq.circuits.qasm_output.QasmUGate(*map(angle_to_exponent, args))
 
 
-ZQUANTUM_BUILTIN_GATE_NAME_TO_CIRQ_GATE: Dict[str, Callable] = {
+ORQUESTRA_BUILTIN_GATE_NAME_TO_CIRQ_GATE: Dict[str, Callable] = {
     "X": cirq.X,
     "Y": cirq.Y,
     "Z": cirq.Z,
@@ -199,7 +198,7 @@ def export_to_cirq(circuit: _circuit.Circuit) -> cirq.Circuit:
 
 
 def export_to_cirq(obj):
-    """Export given native Zquantum object to its Cirq equivalent.
+    """Export given native Orquestra object to its Cirq equivalent.
 
     This should be primarily used with Circuit objects, but
     also works for builtin gates and gate operations.
@@ -214,7 +213,7 @@ def export_to_cirq(obj):
 
 @singledispatch
 def _export_to_cirq(obj):
-    """Export given native Zquantum object to its Cirq equivalent.
+    """Export given native Orquestra object to its Cirq equivalent.
 
     This should be primarily used with Circuit objects, but
     also works for builtin gates and gate operations.
@@ -227,7 +226,7 @@ def _export_to_cirq(obj):
 @_export_to_cirq.register
 def _export_matrix_factory_gate_to_cirq(gate: _gates.MatrixFactoryGate) -> cirq.Gate:
     try:
-        cirq_factory = ZQUANTUM_BUILTIN_GATE_NAME_TO_CIRQ_GATE[gate.name]
+        cirq_factory = ORQUESTRA_BUILTIN_GATE_NAME_TO_CIRQ_GATE[gate.name]
         cirq_params = (
             float(param) if isinstance(param, sympy.Expr) and param.is_Float else param
             for param in gate.params
@@ -264,18 +263,18 @@ def _export_circuit_to_cirq(circuit: _circuit.Circuit) -> cirq.Circuit:
 
 
 def import_from_cirq(obj):
-    """Import given Cirq object, converting it to its ZQuantum counterpart.
+    """Import given Cirq object, converting it to its Orquestra counterpart.
 
-    Gates corresponding to ZQuantum built-in gates, operations on such gates and
+    Gates corresponding to Orquestra built-in gates, operations on such gates and
     circuits composed of such gates will use the native definitions, e.g. `cirq.X` will
     become `circuits.X`.
 
-    Importing gates from Cirq that don't have built-in counterparts in ZQuantum will
-    result in custom gates. See `help(zquantum.core.circuits)` for examples of
+    Importing gates from Cirq that don't have built-in counterparts in Orquestra will
+    result in custom gates. See `help(orquestra.quantum.circuits)` for examples of
     custom gates.
 
     Also note that only objects using only LineQubits are supported, as currently there
-    is no notion of GridQubit in ZQuantum circuits.
+    is no notion of GridQubit in Orquestra circuits.
     """
     return _import_from_cirq(obj)
 
@@ -306,7 +305,7 @@ def _import_from_cirq(obj):
 
 
 @_import_from_cirq.register
-def _convert_qasm_u_gate_to_zquantum_gate(
+def _convert_qasm_u_gate_to_orquestra_gate(
     ugate: cirq.circuits.qasm_output.QasmUGate,
 ) -> _gates.Gate:
     angles = (
@@ -316,7 +315,7 @@ def _convert_qasm_u_gate_to_zquantum_gate(
 
 
 @_import_from_cirq.register
-def _convert_eigengate_to_zquantum_gate(
+def _convert_eigengate_to_orquestra_gate(
     eigengate: cirq.EigenGate,
 ) -> Union[_gates.Gate, NonNativeGate]:
     key = (type(eigengate), eigengate.global_shift, eigengate.exponent)
@@ -334,7 +333,7 @@ def _convert_eigengate_to_zquantum_gate(
 
 
 @_import_from_cirq.register
-def _convert_cirq_identity_gate_to_zquantum_gate(
+def _convert_cirq_identity_gate_to_orquestra_gate(
     identity_gate: cirq.IdentityGate,
 ) -> _gates.Gate:
     return _builtin_gates.I
@@ -358,7 +357,7 @@ def _gen_custom_gate_name(gate_cls, matrix: np.ndarray):
 
 @_import_from_cirq.register(cirq.GateOperation)
 @_import_from_cirq.register(cirq.ControlledOperation)
-def _convert_gate_operation_to_zquantum(operation) -> _gates.GateOperation:
+def _convert_gate_operation_to_orquestra(operation) -> _gates.GateOperation:
     if not all(isinstance(qubit, cirq.LineQubit) for qubit in operation.qubits):
         raise NotImplementedError(
             f"Failed to import {operation}. Grid qubits are not yet supported."

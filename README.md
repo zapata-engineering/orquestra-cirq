@@ -18,4 +18,4 @@ For more information regarding Orquestra and resources, please refer to the [Orq
 
 ## Development and contribution
 
-You can find the development guidelines in the [`z-quantum-core` repository](https://github.com/zapatacomputing/z-quantum-core).
+You can find the development guidelines in the [`orquestra-quantum` repository](https://github.com/zapatacomputing/orquestra-quantum).
