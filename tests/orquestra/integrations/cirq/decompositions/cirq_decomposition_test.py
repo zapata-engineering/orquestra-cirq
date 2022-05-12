@@ -135,7 +135,7 @@ class TestDecompositionOfPowerGates:
         self, gate_to_be_decomposed, target_qubit
     ):
         cirq_circuit = cirq.Circuit([gate_to_be_decomposed.on(target_qubit)])
-        zquantum_circuit = import_from_cirq(
+        orquestra_circuit = import_from_cirq(
             decompose_cirq_circuit(
                 cirq_circuit,
                 [PowerGateToPhaseAndRotation(cirq.XPowGate, cirq.YPowGate)],
@@ -144,7 +144,7 @@ class TestDecompositionOfPowerGates:
 
         assert all(
             isinstance(op, GateOperation) and op.gate.name in ("X", "PHASE", "RX", "RY")
-            for op in zquantum_circuit.operations
+            for op in orquestra_circuit.operations
         )
 
     def test_accepts_only_xpowgate_or_ypowgate_in_initializer_argument(self):

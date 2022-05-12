@@ -1,6 +1,13 @@
 # orquestra-cirq
 
-An Orquestra Resource for Cirq
+## What is it?
+
+`orquestra-cirq` is a [Zapata](https://www.zapatacomputing.com) library holding modules for integrating cirq with [Orquestra](https://www.zapatacomputing.com/orquestra/).
+
+## Installation
+
+Even though it's intended to be used with Orquestra, `orquestra-cirq` can be also used as a Python module.
+To install it, make to install `orquestra-quantum` first. Then you just need to run `pip install .` from the main directory.
 
 ## Overview
 
@@ -18,4 +25,4 @@ For more information regarding Orquestra and resources, please refer to the [Orq
 
 ## Development and contribution
 
-You can find the development guidelines in the [`z-quantum-core` repository](https://github.com/zapatacomputing/z-quantum-core).
+You can find the development guidelines in the [`orquestra-quantum` repository](https://github.com/zapatacomputing/orquestra-quantum).
