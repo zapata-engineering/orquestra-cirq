@@ -104,7 +104,9 @@ class TestGateConversion:
             orquestra_matrix @ np.linalg.inv(cirq.unitary(cirq_gate))
         )
 
-    def test_exporting_gate_to_cirq_gives_expected_gate(self, orquestra_gate, cirq_gate):
+    def test_exporting_gate_to_cirq_gives_expected_gate(
+        self, orquestra_gate, cirq_gate
+    ):
         assert export_to_cirq(orquestra_gate) == cirq_gate
 
     def test_importing_gate_from_cirq_gives_expected_gate(
