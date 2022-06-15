@@ -6,6 +6,7 @@ from typing import List, Sequence, cast
 
 import cirq
 import numpy as np
+import qsimcirq
 from orquestra.quantum.api.backend import QuantumSimulator, StateVector
 from orquestra.quantum.circuits import Circuit
 from orquestra.quantum.measurements import (
@@ -18,7 +19,7 @@ from orquestra.quantum.openfermion import SymbolicOperator, get_sparse_operator
 from ..conversions import export_to_cirq
 
 
-def _prepare_measurable_cirq_circuit(circuit, noise_model):
+def _prepare_measurable_cirq_circuit(circuit, noise_model, param_resolver=None):
     """Export circuit to Cirq and add terminal measurements."""
     cirq_circuit = export_to_cirq(circuit)
 
@@ -31,6 +32,7 @@ def _prepare_measurable_cirq_circuit(circuit, noise_model):
 
 
 class CirqSimulator(QuantumSimulator):
+
     """Simulator using a cirq device (simulator or QPU).
 
     Currently this Simulator uses cirq.Simulator if noise_model is None and
@@ -82,7 +84,6 @@ class CirqSimulator(QuantumSimulator):
         self, circuitset: Sequence[Circuit], n_samples: Sequence[int]
     ) -> List[Measurements]:
         """Run a set of circuits and measure a certain number of bitstrings.
-
         Args:
             circuitset: a set of circuits to prepare the state.
             n_samples: number of bitstrings to measure. If None, `self.n_samples`
@@ -223,3 +224,116 @@ def get_measurement_from_cirq_result_object(
 
     measurement = Measurements(samples)
     return measurement
+
+
+class QsimSimulator(QuantumSimulator):
+    """Simulator using a cirq device (simulator or QPU).
+
+    Currently this Simulator uses cirq.Simulator if noise_model is None and
+    cirq.DensityMatrixSimulator otherwise.
+
+    Args:
+        noise_model: an optional noise model to pass in for noisy simulations
+
+    Attributes:
+        noise_model: an optional noise model to pass in for noisy simulations
+        simulator: Cirq simulator this class uses.
+    """
+
+    supports_batching = True
+    batch_size = sys.maxsize
+
+    def __init__(
+        self,
+        noise_model=None,
+        seed=None,
+        circuit_memoization_size: int = 0,
+        max_fused_gate_size: int = 2,
+        cpu_threads: int = 1,
+        ev_noisy_repetitions: int = 1,
+        use_gpu: bool = False,
+        gpu_mode: int = 0,
+        gpu_sim_threads: int = 256,
+        gpu_state_threads: int = 512,
+        gpu_data_blocks: int = 16,
+        verbosity: int = 0,
+        denormals_are_zeros: bool = False,
+    ):
+        super().__init__()
+
+        breakpoint()
+
+        qsim_options = qsimcirq.QSimOptions(
+            max_fused_gate_size=max_fused_gate_size,
+            cpu_threads=cpu_threads,
+            ev_noisy_repetitions=ev_noisy_repetitions,
+            use_gpu=use_gpu,
+            gpu_mode=gpu_mode,
+            gpu_sim_threads=gpu_sim_threads,
+            gpu_state_threads=gpu_state_threads,
+            gpu_data_blocks=gpu_data_blocks,
+            verbosity=verbosity,
+            denormals_are_zeros=denormals_are_zeros,
+        )
+
+        self.noise_model = noise_model
+
+        self.simulator = qsimcirq.QSimSimulator(
+            qsim_options=qsim_options,
+            seed=seed,
+            # noise=noise_model, #TODO: investigate later
+            circuit_memoization_size=circuit_memoization_size,
+        )
+
+    def run_circuit_and_measure(
+        self, circuit: Circuit, n_samples: int, param_resolver=None
+    ) -> Measurements:
+        super().run_circuit_and_measure(circuit, n_samples)
+
+        result_object = self.simulator.run(
+            _prepare_measurable_cirq_circuit(
+                circuit, self.noise_model, param_resolver=None
+            ),
+            repetitions=n_samples,
+        )
+
+        measurement = get_measurement_from_cirq_result_object(
+            result_object, circuit.n_qubits, n_samples
+        )
+
+        return measurement
+
+    def run_circuitset_and_measure(
+        self, circuitset: Sequence[Circuit], n_samples: Sequence[int]
+    ) -> List[Measurements]:
+
+        super().run_circuitset_and_measure(circuitset, n_samples)
+
+        cirq_circuitset = [
+            _prepare_measurable_cirq_circuit(circuit, self.noise_model)
+            for circuit in circuitset
+        ]
+
+        # TODO: confirm run_batch
+        result = self.simulator.run_batch(cirq_circuitset, repetitions=n_samples)
+
+        measurements_set = [
+            get_measurement_from_cirq_result_object(
+                sub_result[0], circuit.n_qubits, num_samples
+            )
+            for sub_result, circuit, num_samples in zip(result, circuitset, n_samples)
+        ]
+
+        return measurements_set
+
+    def get_exact_expectation_values(
+        self, circuit: Circuit, qubit_operator: SymbolicOperator
+    ) -> ExpectationValues:
+        pass
+
+    def _get_wavefunction_from_native_circuit():
+        pass
+
+
+class QsimhSimulator(QuantumSimulator):
+    pass
