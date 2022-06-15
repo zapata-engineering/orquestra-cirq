@@ -336,10 +336,8 @@ class QsimSimulator(QuantumSimulator):
         self, circuit: Circuit, initial_state: StateVector
     ) -> StateVector:
         cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
-        # TODO: fix initial_state
-        # initial_state = cast(cirq.STATE_VECTOR_LIKE, initial_state)
 
-        initial_state = None
+        initial_state = np.array(initial_state, np.complex64)
 
         simulated_result = self.simulator.simulate(
             cirq_circuit,
