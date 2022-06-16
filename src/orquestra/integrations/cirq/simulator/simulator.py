@@ -2,10 +2,12 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 import sys
-from typing import Dict, List, Sequence, Union, cast, Optional
+from typing import Dict, List, Optional, Sequence, Union, cast
 
 import cirq
 import numpy as np
+import qsimcirq
+from cirq import ops
 from orquestra.quantum.api.backend import QuantumSimulator, StateVector
 from orquestra.quantum.circuits import Circuit
 from orquestra.quantum.measurements import (

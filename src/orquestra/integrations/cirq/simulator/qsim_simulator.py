@@ -2,10 +2,11 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 import sys
-from typing import Dict, List, Sequence, Union, cast, Optional
+from typing import Dict, List, Optional, Sequence, Union, cast
 
 import cirq
 import numpy as np
+import qsimcirq
 from orquestra.quantum.api.backend import QuantumSimulator, StateVector
 from orquestra.quantum.circuits import Circuit
 from orquestra.quantum.measurements import (
@@ -14,15 +15,17 @@ from orquestra.quantum.measurements import (
     expectation_values_to_real,
 )
 from orquestra.quantum.openfermion import SymbolicOperator, get_sparse_operator
-from qsimcirq import QSimOptions
-from qsimcirq import QSimSimulator as _QSimSimulator
 
 from ..conversions import export_to_cirq
-from .simulator import CirqSimulator, _prepare_measurable_cirq_circuit
+from .simulator import (
+    CirqSimulator,
+    _prepare_measurable_cirq_circuit,
+    get_measurement_from_cirq_result_object,
+)
 
 
 # TODO: We need to see if this even make sense...
-class QSimSimulator(QuantumSimulator, CirqSimulator):
+class QSimSimulator(CirqSimulator, QuantumSimulator):
     """Simulator using a cirq device (simulator or QPU).
     TODO
     Currently this Simulator uses cirq.Simulator if noise_model is None and
@@ -48,18 +51,15 @@ class QSimSimulator(QuantumSimulator, CirqSimulator):
         param_resolver=None,
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
         circuit_memoization_size: int = 0,
-        qsim_options: Union[None, Dict, QSimOptions] = None,
+        qsim_options: Union[None, Dict, qsimcirq.QSimOptions] = None,
     ):
         super().__init__()
-
-        if qsim_options is None or type(qsim_options) is dict:
-            qsim_options = QSimOptions(qsim_options)
 
         self.noise_model = noise_model
         self.qubit_order = qubit_order
         self.param_resolver = param_resolver
 
-        self.simulator = _QSimSimulator(
+        self.simulator = qsimcirq.QSimSimulator(
             qsim_options=qsim_options,
             seed=seed,
             # noise=noise_model, #TODO: investigate later
@@ -67,6 +67,7 @@ class QSimSimulator(QuantumSimulator, CirqSimulator):
         )
 
     def run_circuit_and_measure(self, circuit: Circuit, n_samples: int) -> Measurements:
+
         super().run_circuit_and_measure(circuit, n_samples)
 
         result_object = self.simulator.run(
@@ -144,5 +145,5 @@ class QSimSimulator(QuantumSimulator, CirqSimulator):
         return expectation_values_to_real(ExpectationValues(np.asarray(values)))
 
 
-class QsimhSimulator(QuantumSimulator):
-    pass
+# class QsimhSimulator(QuantumSimulator):
+#     pass

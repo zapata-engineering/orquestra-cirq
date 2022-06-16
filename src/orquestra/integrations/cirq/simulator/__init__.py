@@ -4,6 +4,6 @@
 from .simulator import CirqSimulator
 
 try:
-    from .qsim_simulator import QsimSimulator
+    from .qsim_simulator import QSimSimulator
 except:
     pass
