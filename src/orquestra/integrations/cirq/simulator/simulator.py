@@ -2,11 +2,10 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 import sys
-from typing import Dict, List, Sequence, Union, cast
+from typing import Dict, List, Sequence, Union, cast, Optional
 
 import cirq
 import numpy as np
-from cirq import ops
 from orquestra.quantum.api.backend import QuantumSimulator, StateVector
 from orquestra.quantum.circuits import Circuit
 from orquestra.quantum.measurements import (
@@ -15,8 +14,6 @@ from orquestra.quantum.measurements import (
     expectation_values_to_real,
 )
 from orquestra.quantum.openfermion import SymbolicOperator, get_sparse_operator
-from pytest import param
-from qsimcirq import QSimOptions, QSimSimulator
 
 from ..conversions import export_to_cirq
 
@@ -42,6 +39,7 @@ class CirqSimulator(QuantumSimulator):
 
     Args:
         noise_model: an optional noise model to pass in for noisy simulations
+        seed: seed for random number generator.
 
     Attributes:
         noise_model: an optional noise model to pass in for noisy simulations
@@ -51,7 +49,7 @@ class CirqSimulator(QuantumSimulator):
     supports_batching = True
     batch_size = sys.maxsize
 
-    def __init__(self, noise_model=None, seed=None):
+    def __init__(self, noise_model=None, seed: int = None):
         super().__init__()
         self.noise_model = noise_model
         if self.noise_model is not None:
@@ -59,7 +57,9 @@ class CirqSimulator(QuantumSimulator):
         else:
             self.simulator = cirq.Simulator(seed=seed)
 
-    def run_circuit_and_measure(self, circuit: Circuit, n_samples=None) -> Measurements:
+    def run_circuit_and_measure(
+        self, circuit: Circuit, n_samples: Optional[int] = None
+    ) -> Measurements:
         """Run a circuit and measure a certain number of bitstrings.
 
         Args:
@@ -229,204 +229,3 @@ def get_measurement_from_cirq_result_object(
 
     measurement = Measurements(samples)
     return measurement
-
-
-class QSimulator(QuantumSimulator):
-    """Simulator using a cirq device (simulator or QPU).
-
-    Currently this Simulator uses cirq.Simulator if noise_model is None and
-    cirq.DensityMatrixSimulator otherwise.
-
-    Args:
-        noise_model: an optional noise model to pass in for noisy simulations
-
-    Attributes:
-        noise_model: an optional noise model to pass in for noisy simulations
-        simulator: Cirq simulator this class uses.
-    """
-
-    supports_batching = True
-    batch_size = sys.maxsize
-
-    def __init__(
-        self,
-        noise_model=None,
-        seed=None,
-        param_resolver=None,
-        qubit_order=ops.QubitOrder.DEFAULT,
-        circuit_memoization_size: int = 0,
-        qsim_options: Union[None, Dict, QSimOptions] = None,
-    ):
-        super().__init__()
-
-        if qsim_options is None or is type(qsim_options) is dict:
-            qsim_options = QSimOptions(qsim_options)
-
-        qsim_options = QSimOptions(
-            max_fused_gate_size=max_fused_gate_size,
-            cpu_threads=cpu_threads,
-            ev_noisy_repetitions=ev_noisy_repetitions,
-            use_gpu=use_gpu,
-            gpu_mode=gpu_mode,
-            gpu_sim_threads=gpu_sim_threads,
-            gpu_state_threads=gpu_state_threads,
-            gpu_data_blocks=gpu_data_blocks,
-            verbosity=verbosity,
-            denormals_are_zeros=denormals_are_zeros,
-        )
-
-        self.noise_model = noise_model
-        self.qubit_order = qubit_order
-        self.param_resolver = param_resolver
-
-        self.simulator = qsimcirq.QSimSimulator(
-            qsim_options=qsim_options,
-            seed=seed,
-            # noise=noise_model, #TODO: investigate later
-            circuit_memoization_size=circuit_memoization_size,
-        )
-
-    def run_circuit_and_measure(
-        self, circuit: Circuit, n_samples: int, param_resolver=None
-    ) -> Measurements:
-        super().run_circuit_and_measure(circuit, n_samples)
-
-        result_object = self.simulator.run(
-            _prepare_measurable_cirq_circuit(
-                circuit, self.noise_model, param_resolver=None
-            ),
-            repetitions=n_samples,
-        )
-
-        measurement = get_measurement_from_cirq_result_object(
-            result_object, circuit.n_qubits, n_samples
-        )
-
-        return measurement
-
-    def run_circuitset_and_measure(
-        self, circuitset: Sequence[Circuit], n_samples: Sequence[int]
-    ) -> List[Measurements]:
-
-        super().run_circuitset_and_measure(circuitset, n_samples)
-
-        cirq_circuitset = [
-            _prepare_measurable_cirq_circuit(circuit, self.noise_model)
-            for circuit in circuitset
-        ]
-
-        result = self.simulator.run_batch(cirq_circuitset, repetitions=n_samples)
-
-        measurements_set = [
-            get_measurement_from_cirq_result_object(
-                sub_result[0], circuit.n_qubits, num_samples
-            )
-            for sub_result, circuit, num_samples in zip(result, circuitset, n_samples)
-        ]
-
-        return measurements_set
-
-    def _get_wavefunction_from_native_circuit(
-        self, circuit: Circuit, initial_state: StateVector
-    ) -> StateVector:
-        cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
-
-        initial_state = np.array(initial_state, np.complex64)
-
-        simulated_result = self.simulator.simulate(
-            cirq_circuit,
-            param_resolver=self.param_resolver,
-            qubit_order=self.qubit_order,
-            initial_state=initial_state,
-        )
-
-        return simulated_result.final_state_vector
-
-    # Same as CirqSimulator
-    def get_exact_expectation_values(
-        self, circuit: Circuit, qubit_operator: SymbolicOperator
-    ) -> ExpectationValues:
-        """_summary_
-
-        Args:
-            circuit (Circuit): _description_
-            qubit_operator (SymbolicOperator): _description_
-
-        Returns:
-            ExpectationValues: _description_
-        """
-
-        if self.noise_model is not None:
-            return self.get_exact_noisy_expectation_values(circuit, qubit_operator)
-        else:
-            wavefunction = self.get_wavefunction(circuit).amplitudes
-
-            # Pyquil does not support PauliSums with no terms.
-            if len(qubit_operator.terms) == 0:
-                return ExpectationValues(np.zeros((0,)))
-
-            values = []
-
-            for pauli_term in qubit_operator:
-                sparse_pauli_term_ndarray = get_sparse_operator(
-                    pauli_term, n_qubits=circuit.n_qubits
-                ).toarray()
-                if np.size(sparse_pauli_term_ndarray) == 1:
-                    expectation_value = sparse_pauli_term_ndarray[0][0]
-                    values.append(expectation_value)
-                else:
-                    expectation_value = np.real(
-                        wavefunction.conj().T @ sparse_pauli_term_ndarray @ wavefunction
-                    )
-                    values.append(expectation_value)
-
-            return expectation_values_to_real(ExpectationValues(np.asarray(values)))
-
-    # Same as CirqSimulator
-    def get_exact_noisy_expectation_values(
-        self, circuit: Circuit, qubit_operator: SymbolicOperator
-    ) -> ExpectationValues:
-        """Compute exact expectation values w.r.t. given operator in presence of noise.
-
-        Note that this method can be used only if simulator's noise_model is not set
-        to None.
-
-        Args:
-            circuit: the circuit to prepare the state
-            qubit_operator: the operator to measure
-        Returns:
-            the expectation values of each term in the operator
-        Raises:
-            RuntimeError if this simulator's noise_model is None.
-        """
-        # TODO: see how to handle this in qsim
-
-        if self.noise_model is None:
-            raise RuntimeError(
-                "Please provide noise model to get exact noisy expectation values"
-            )
-        else:
-            cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
-            values = []
-
-            for pauli_term in qubit_operator:
-                sparse_pauli_term_ndarray = get_sparse_operator(
-                    pauli_term, n_qubits=circuit.n_qubits
-                ).toarray()
-                if np.size(sparse_pauli_term_ndarray) == 1:
-                    expectation_value = sparse_pauli_term_ndarray[0][0]
-                    values.append(expectation_value)
-                else:
-                    noisy_circuit = cirq_circuit.with_noise(self.noise_model)
-                    rho = self.simulator.simulate(noisy_circuit).final_density_matrix
-                    expectation_value = np.real(
-                        np.trace(
-                            rho @ sparse_pauli_term_ndarray
-                        )  # TODO: understand the background behind this
-                    )
-                    values.append(expectation_value)
-        return expectation_values_to_real(ExpectationValues(np.asarray(values)))
-
-
-class QsimhSimulator(QuantumSimulator):
-    pass

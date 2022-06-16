@@ -29,11 +29,12 @@ def sampling_simulator():
     return CirqSimulator()
 
 
+# TODO: refactor to use fixtures instead of defining simulator in each test.
+# As in test_setup_basic_simulators
 class TestCirqSimulator(QuantumSimulatorTests):
-    def test_setup_basic_simulators(self):
-        simulator = CirqSimulator()
-        assert isinstance(simulator, CirqSimulator)
-        assert simulator.noise_model is None
+    def test_setup_basic_simulators(self, wf_simulator):
+        assert isinstance(wf_simulator, CirqSimulator)
+        assert wf_simulator.noise_model is None
 
     def test_run_circuit_and_measure(self):
         # Given
