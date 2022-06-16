@@ -2,11 +2,10 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 import sys
-from typing import List, Sequence, cast
+from typing import Dict, List, Sequence, Union, cast
 
 import cirq
 import numpy as np
-import qsimcirq
 from cirq import ops
 from orquestra.quantum.api.backend import QuantumSimulator, StateVector
 from orquestra.quantum.circuits import Circuit
@@ -17,6 +16,7 @@ from orquestra.quantum.measurements import (
 )
 from orquestra.quantum.openfermion import SymbolicOperator, get_sparse_operator
 from pytest import param
+from qsimcirq import QSimOptions, QSimSimulator
 
 from ..conversions import export_to_cirq
 
@@ -231,7 +231,7 @@ def get_measurement_from_cirq_result_object(
     return measurement
 
 
-class QsimSimulator(QuantumSimulator):
+class QSimulator(QuantumSimulator):
     """Simulator using a cirq device (simulator or QPU).
 
     Currently this Simulator uses cirq.Simulator if noise_model is None and
@@ -255,20 +255,14 @@ class QsimSimulator(QuantumSimulator):
         param_resolver=None,
         qubit_order=ops.QubitOrder.DEFAULT,
         circuit_memoization_size: int = 0,
-        max_fused_gate_size: int = 2,
-        cpu_threads: int = 1,
-        ev_noisy_repetitions: int = 1,
-        use_gpu: bool = False,
-        gpu_mode: int = 0,
-        gpu_sim_threads: int = 256,
-        gpu_state_threads: int = 512,
-        gpu_data_blocks: int = 16,
-        verbosity: int = 0,
-        denormals_are_zeros: bool = False,
+        qsim_options: Union[None, Dict, QSimOptions] = None,
     ):
         super().__init__()
 
-        qsim_options = qsimcirq.QSimOptions(
+        if qsim_options is None or is type(qsim_options) is dict:
+            qsim_options = QSimOptions(qsim_options)
+
+        qsim_options = QSimOptions(
             max_fused_gate_size=max_fused_gate_size,
             cpu_threads=cpu_threads,
             ev_noisy_repetitions=ev_noisy_repetitions,
@@ -405,6 +399,8 @@ class QsimSimulator(QuantumSimulator):
         Raises:
             RuntimeError if this simulator's noise_model is None.
         """
+        # TODO: see how to handle this in qsim
+
         if self.noise_model is None:
             raise RuntimeError(
                 "Please provide noise model to get exact noisy expectation values"
@@ -424,7 +420,9 @@ class QsimSimulator(QuantumSimulator):
                     noisy_circuit = cirq_circuit.with_noise(self.noise_model)
                     rho = self.simulator.simulate(noisy_circuit).final_density_matrix
                     expectation_value = np.real(
-                        np.trace(rho @ sparse_pauli_term_ndarray)
+                        np.trace(
+                            rho @ sparse_pauli_term_ndarray
+                        )  # TODO: understand the background behind this
                     )
                     values.append(expectation_value)
         return expectation_values_to_real(ExpectationValues(np.asarray(values)))
