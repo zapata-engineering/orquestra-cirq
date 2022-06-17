@@ -2,12 +2,14 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 import sys
-from typing import Dict, List, Optional, Sequence, Union, cast
+from typing import List, Sequence, Union, cast
 
 import cirq
 import numpy as np
 import qsimcirq
-from cirq import ops
+from attr import Attribute
+
+# from cirq import ops
 from orquestra.quantum.api.backend import QuantumSimulator, StateVector
 from orquestra.quantum.circuits import Circuit
 from orquestra.quantum.measurements import (
@@ -54,14 +56,15 @@ class CirqSimulator(QuantumSimulator):
     def __init__(self, noise_model=None, seed: int = None):
         super().__init__()
         self.noise_model = noise_model
+        self.simulator: Union[
+            cirq.DensityMatrixSimulator, cirq.Simulator, qsimcirq.QSimSimulator
+        ]
         if self.noise_model is not None:
             self.simulator = cirq.DensityMatrixSimulator(dtype=np.complex128, seed=seed)
         else:
             self.simulator = cirq.Simulator(seed=seed)
 
-    def run_circuit_and_measure(
-        self, circuit: Circuit, n_samples: Optional[int] = None
-    ) -> Measurements:
+    def run_circuit_and_measure(self, circuit: Circuit, n_samples: int) -> Measurements:
         """Run a circuit and measure a certain number of bitstrings.
 
         Args:
@@ -104,7 +107,7 @@ class CirqSimulator(QuantumSimulator):
             for circuit in circuitset
         ]
 
-        result = self.simulator.run_batch(cirq_circuitset, repetitions=n_samples)
+        result = self.simulator.run_batch(cirq_circuitset, repetitions=list(n_samples))
 
         measurements_set = [
             get_measurement_from_cirq_result_object(
@@ -172,6 +175,11 @@ class CirqSimulator(QuantumSimulator):
             raise RuntimeError(
                 "Please provide noise model to get exact noisy expectation values"
             )
+        elif not isinstance(self.simulator, cirq.DensityMatrixSimulator):
+            raise TypeError(
+                "Simulator cannot simulate noise as it is not a "
+                "density matrix simulator"
+            )
         else:
             cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
             values = []
@@ -183,7 +191,9 @@ class CirqSimulator(QuantumSimulator):
                 if np.size(sparse_pauli_term_ndarray) == 1:
                     expectation_value = sparse_pauli_term_ndarray[0][0]
                     values.append(expectation_value)
+
                 else:
+
                     noisy_circuit = cirq_circuit.with_noise(self.noise_model)
                     rho = self.simulator.simulate(noisy_circuit).final_density_matrix
                     expectation_value = np.real(
@@ -192,9 +202,6 @@ class CirqSimulator(QuantumSimulator):
                     values.append(expectation_value)
         return expectation_values_to_real(ExpectationValues(np.asarray(values)))
 
-    # TODO: covert this to match v=0.14.0
-    # TODO: simulator.simulate(circ)
-    # https://github.com/quantumlib/Cirq/blob/88f30304c5ba85671a4a1d099fa93a27e5df8855/docs/simulation.ipynb
     def _get_wavefunction_from_native_circuit(
         self, circuit: Circuit, initial_state: StateVector
     ) -> StateVector:

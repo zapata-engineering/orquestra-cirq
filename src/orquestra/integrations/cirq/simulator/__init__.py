@@ -5,5 +5,5 @@ from .simulator import CirqSimulator
 
 try:
     from .qsim_simulator import QSimSimulator
-except:
+except ModuleNotFoundError:
     pass
