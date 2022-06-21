@@ -155,5 +155,7 @@ class TestQsimSimulator(QuantumSimulatorTests):
             assert ampl1 == ampl2
 
 
-class TestCirqSimulatorGates(QuantumSimulatorGatesTest):
+class TestQSimSimulatorGates(QuantumSimulatorGatesTest):
+    atol_wavefunction = 5e-7
+
     pass

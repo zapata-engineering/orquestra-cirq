@@ -2,22 +2,14 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 import sys
-from typing import List, Sequence, Union, cast
+from typing import cast
 
 import cirq
 import numpy as np
-import qsimcirq
-from attr import Attribute
 
 # from cirq import ops
-from orquestra.quantum.api.backend import QuantumSimulator, StateVector
+from orquestra.quantum.api.backend import StateVector
 from orquestra.quantum.circuits import Circuit
-from orquestra.quantum.measurements import (
-    ExpectationValues,
-    Measurements,
-    expectation_values_to_real,
-)
-from orquestra.quantum.openfermion import SymbolicOperator, get_sparse_operator
 
 from ..conversions import export_to_cirq
 from ._base import CirqBaseSimulator

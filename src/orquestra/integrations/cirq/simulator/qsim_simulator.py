@@ -2,23 +2,16 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 import sys
-from typing import Dict, List, Optional, Sequence, Union, cast
+from typing import Dict, Union, cast
 
 import cirq
 import numpy as np
 import qsimcirq
-from orquestra.quantum.api.backend import QuantumSimulator, StateVector
+from orquestra.quantum.api.backend import StateVector
 from orquestra.quantum.circuits import Circuit
-from orquestra.quantum.measurements import (
-    ExpectationValues,
-    Measurements,
-    expectation_values_to_real,
-)
-from orquestra.quantum.openfermion import SymbolicOperator, get_sparse_operator
 
 from ..conversions import export_to_cirq
 from ._base import CirqBaseSimulator
-from .simulator import CirqSimulator
 
 
 class QSimSimulator(CirqBaseSimulator):
@@ -71,7 +64,6 @@ class QSimSimulator(CirqBaseSimulator):
         self, circuit: Circuit, initial_state: StateVector
     ) -> StateVector:
         """Return the state vector at the end of the computation
-
         Args:
             circuit (Circuit): the circuit to prepare the state
             initial_state (StateVector): initial state of the system
