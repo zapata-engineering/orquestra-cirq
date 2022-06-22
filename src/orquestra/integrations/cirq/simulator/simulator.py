@@ -40,10 +40,6 @@ class CirqSimulator(CirqBaseSimulator):
             if noise_model is not None
             else cirq.Simulator(seed=seed)
         )
-        # if noise_model is not None:
-        #     simulator = cirq.DensityMatrixSimulator(dtype=np.complex128, seed=seed)
-        # else:
-        #     simulator = cirq.Simulator(seed=seed)
 
         super().__init__(simulator, noise_model)
 

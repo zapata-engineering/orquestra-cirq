@@ -194,17 +194,19 @@ def get_measurement_from_cirq_result_object(
     Return:
         Measurements.
     """
+
     numpy_samples = list(
         zip(
             *(
-                result_object.measurements.get(str(sub_key), [[0]] * n_samples)
+                result_object.measurements.get(str(int(sub_key)), [[0]] * n_samples)
                 for sub_key in range(n_qubits)
             )
         )
     )
 
     samples = [
-        tuple(key[0] for key in numpy_bitstring) for numpy_bitstring in numpy_samples
+        tuple(int(key[0]) for key in numpy_bitstring)
+        for numpy_bitstring in numpy_samples
     ]
 
     measurement = Measurements(samples)
