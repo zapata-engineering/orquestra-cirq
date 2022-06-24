@@ -23,7 +23,7 @@ jobs:
     # Run jobs for a couple of Python versions.
     strategy:
       matrix:
-        python: [3.7]
+        python: [3.7, "3.10"]
 
     name: Style - Python ${{ matrix.python }}
 
