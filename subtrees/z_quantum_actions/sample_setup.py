@@ -6,8 +6,9 @@
 import site
 import sys
 
-from pygit2 import Repository
 from setuptools import find_namespace_packages, setup
+
+from pygit2 import Repository
 
 try:
     from subtrees.z_quantum_actions.setup_extras import extras
