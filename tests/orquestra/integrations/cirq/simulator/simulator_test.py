@@ -23,6 +23,7 @@ def backend():
 def wf_simulator():
     return CirqSimulator()
 
+
 class TestCirqSimulator(QuantumSimulatorTests):
     def test_setup_basic_simulators(self, wf_simulator):
         assert isinstance(wf_simulator, CirqSimulator)
