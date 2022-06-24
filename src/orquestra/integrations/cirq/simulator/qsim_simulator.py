@@ -2,7 +2,7 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 import sys
-from typing import Dict, Union, cast
+from typing import Dict, Optional, Union, cast
 
 import cirq
 import numpy as np
@@ -11,10 +11,10 @@ from orquestra.quantum.api.backend import StateVector
 from orquestra.quantum.circuits import Circuit
 
 from ..conversions import export_to_cirq
-from ._base import CirqBaseSimulator
+from ._base import CirqBasedSimulator
 
 
-class QSimSimulator(CirqBaseSimulator):
+class QSimSimulator(CirqBasedSimulator):
 
     """Simulator using a qsimcirq simular which is optimized for GPU
     using cuStateVec (https://docs.nvidia.com/cuda/cuquantum/custatevec/index.html).
@@ -47,7 +47,7 @@ class QSimSimulator(CirqBaseSimulator):
         param_resolver=None,
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
         circuit_memoization_size: int = 0,
-        qsim_options: Union[None, Dict, qsimcirq.QSimOptions] = None,
+        qsim_options: Optional[Union[Dict, qsimcirq.QSimOptions]] = None,
     ):
         self.qubit_order = qubit_order
         self.param_resolver = param_resolver
@@ -65,14 +65,12 @@ class QSimSimulator(CirqBaseSimulator):
     ) -> StateVector:
         """Return the state vector at the end of the computation
         Args:
-            circuit (Circuit): the circuit to prepare the state
-            initial_state (StateVector): initial state of the system
+            circuit: the circuit to prepare the state
+            initial_state: initial state of the system
 
         Returns:
             StateVector: Returns the final state of the computation as ndarray
 
-        Raises:
-            TypeError if this simulator is not QSimSimulator.
         """
         cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
 

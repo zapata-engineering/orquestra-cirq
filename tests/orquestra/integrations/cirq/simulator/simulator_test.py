@@ -23,14 +23,6 @@ def backend():
 def wf_simulator():
     return CirqSimulator()
 
-
-@pytest.fixture()
-def sampling_simulator():
-    return CirqSimulator()
-
-
-# TODO: refactor to use fixtures instead of defining simulator in each test.
-# As in test_setup_basic_simulators
 class TestCirqSimulator(QuantumSimulatorTests):
     def test_setup_basic_simulators(self, wf_simulator):
         assert isinstance(wf_simulator, CirqSimulator)

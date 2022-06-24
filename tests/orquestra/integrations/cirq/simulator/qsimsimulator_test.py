@@ -24,13 +24,6 @@ def backend():
 @pytest.fixture()
 def wf_simulator():
     return QSimSimulator()
-
-
-@pytest.fixture()
-def sampling_simulator():
-    return QSimSimulator()
-
-
 class TestQsimSimulator(QuantumSimulatorTests):
     def test_setup_basic_simulators(self):
         simulator = QSimSimulator()
