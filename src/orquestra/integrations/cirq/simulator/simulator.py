@@ -4,12 +4,12 @@
 import sys
 from typing import cast
 
+import cirq
 import numpy as np
+
 # from cirq import ops
 from orquestra.quantum.api.backend import StateVector
 from orquestra.quantum.circuits import Circuit
-
-import cirq
 
 from ..conversions import export_to_cirq
 from ._base import CirqBasedSimulator

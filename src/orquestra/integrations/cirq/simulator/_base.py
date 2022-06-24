@@ -6,14 +6,16 @@ import abc
 import sys
 from typing import List, Sequence, Union, cast
 
+import cirq
 import numpy as np
 from orquestra.quantum.api.backend import QuantumSimulator, StateVector
 from orquestra.quantum.circuits import Circuit
-from orquestra.quantum.measurements import (ExpectationValues, Measurements,
-                                            expectation_values_to_real)
+from orquestra.quantum.measurements import (
+    ExpectationValues,
+    Measurements,
+    expectation_values_to_real,
+)
 from orquestra.quantum.openfermion import SymbolicOperator, get_sparse_operator
-
-import cirq
 
 from ..conversions import export_to_cirq
 
@@ -30,7 +32,7 @@ def _prepare_measurable_cirq_circuit(circuit, noise_model):
     return cirq_circuit
 
 
-class CirqBaseSimulator(QuantumSimulator):
+class CirqBasedSimulator(QuantumSimulator):
 
     supports_batching = True
     batch_size = sys.maxsize
@@ -83,13 +85,17 @@ class CirqBaseSimulator(QuantumSimulator):
             for circuit in circuitset
         ]
 
-        result = self.simulator.run_batch(cirq_circuitset, repetitions=list(n_samples))
+        simulation_result = self.simulator.run_batch(
+            cirq_circuitset, repetitions=list(n_samples)
+        )
 
         measurements_set = [
             get_measurement_from_cirq_result_object(
                 sub_result[0], circuit.n_qubits, num_samples
             )
-            for sub_result, circuit, num_samples in zip(result, circuitset, n_samples)
+            for sub_result, circuit, num_samples in zip(
+                simulation_result, circuitset, n_samples
+            )
         ]
 
         return measurements_set
