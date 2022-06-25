@@ -7,7 +7,7 @@ github_actions:
 	python3 -m venv ${VENV_NAME} && \
 		${VENV_NAME}/bin/python3 -m pip install --upgrade pip && \
 		${VENV_NAME}/bin/python3 -m pip install ./orquestra-quantum && \
-		${VENV_NAME}/bin/python3 -m pip install -e '.[dev]'
+		${VENV_NAME}/bin/python3 -m pip install -e '.[dev,qsim]'
 
 
 build-system-deps:
