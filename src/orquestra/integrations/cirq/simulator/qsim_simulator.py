@@ -43,14 +43,12 @@ class QSimSimulator(CirqBasedSimulator):
     def __init__(
         self,
         noise_model=None,
-        seed=None,
-        param_resolver=None,
+        param_resolver: "cirq.ParamResolverOrSimilarType" = None,
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
+        seed: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
         circuit_memoization_size: int = 0,
         qsim_options: Optional[Union[Dict, qsimcirq.QSimOptions]] = None,
     ):
-        self.qubit_order = qubit_order
-        self.param_resolver = param_resolver
 
         simulator = qsimcirq.QSimSimulator(
             qsim_options=qsim_options,
@@ -58,32 +56,4 @@ class QSimSimulator(CirqBasedSimulator):
             circuit_memoization_size=circuit_memoization_size,
         )
 
-        super().__init__(simulator, noise_model)
-
-    def _get_wavefunction_from_native_circuit(
-        self, circuit: Circuit, initial_state: StateVector
-    ) -> StateVector:
-        """Return the state vector at the end of the computation
-        Args:
-            circuit: the circuit to prepare the state
-            initial_state: initial state of the system
-
-        Returns:
-            StateVector: Returns the final state of the computation as ndarray
-
-        """
-        cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
-
-        initial_state = np.array(initial_state, np.complex64)
-
-        simulated_result = self.simulator.simulate(
-            cirq_circuit,
-            param_resolver=self.param_resolver,
-            qubit_order=self.qubit_order,
-            initial_state=initial_state,
-        )
-
-        return simulated_result.final_state_vector
-
-    def _extract_density_matrix(self, result):
-        return result.density_matrix_of()
+        super().__init__(simulator, noise_model, param_resolver, qubit_order)

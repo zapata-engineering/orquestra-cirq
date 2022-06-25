@@ -37,10 +37,18 @@ class CirqBasedSimulator(QuantumSimulator):
     supports_batching = True
     batch_size = sys.maxsize
 
-    def __init__(self, simulator, noise_model=None):
+    def __init__(
+        self,
+        simulator,
+        noise_model=None,
+        param_resolver: "cirq.ParamResolverOrSimilarType" = None,
+        qubit_order=cirq.ops.QubitOrder.DEFAULT,
+    ):
         super().__init__()
         self.noise_model = noise_model
         self.simulator = simulator
+        self.param_resolver = param_resolver
+        self.qubit_order = qubit_order
 
     def run_circuit_and_measure(self, circuit: Circuit, n_samples: int) -> Measurements:
         """Run a circuit and measure a certain number of bitstrings.
@@ -56,6 +64,7 @@ class CirqBasedSimulator(QuantumSimulator):
 
         result_object = self.simulator.run(
             _prepare_measurable_cirq_circuit(circuit, self.noise_model),
+            param_resolver=self.param_resolver,
             repetitions=n_samples,
         )
 
@@ -179,15 +188,24 @@ class CirqBasedSimulator(QuantumSimulator):
                 values.append(expectation_value)
         return expectation_values_to_real(ExpectationValues(np.asarray(values)))
 
-    @abc.abstractmethod
     def _get_wavefunction_from_native_circuit(
         self, circuit: Circuit, initial_state: StateVector
     ) -> StateVector:
-        pass
+        cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
 
-    @abc.abstractmethod
+        initial_state = np.array(initial_state, np.complex64)
+
+        simulated_result = self.simulator.simulate(
+            cirq_circuit,
+            param_resolver=self.param_resolver,
+            qubit_order=self.qubit_order,
+            initial_state=initial_state,
+        )
+
+        return simulated_result.final_state_vector
+
     def _extract_density_matrix(self, result):
-        pass
+        return result.density_matrix_of()
 
 
 def get_measurement_from_cirq_result_object(
