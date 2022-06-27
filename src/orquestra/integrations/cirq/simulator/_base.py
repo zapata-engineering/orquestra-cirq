@@ -21,7 +21,16 @@ from ..conversions import export_to_cirq
 
 
 def _prepare_measurable_cirq_circuit(circuit, noise_model):
-    """Export circuit to Cirq and add terminal measurements."""
+    """
+    Export circuit to Cirq and add terminal measurements.
+
+    Args:
+        circuit (orquestra.quantum.circuit.Circuit): the circuit to prepare the state.
+        noise_model: model to create a noisy circuit
+
+    Returns:
+        circuit to run on a cirq or qsim simulator
+    """
     cirq_circuit = export_to_cirq(circuit)
 
     if noise_model is not None:
@@ -41,9 +50,17 @@ class CirqBasedSimulator(QuantumSimulator):
         self,
         simulator,
         noise_model=None,
-        param_resolver: "cirq.ParamResolverOrSimilarType" = None,
+        param_resolver: cirq.ParamResolverOrSimilarType = None,
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
     ):
+        """initializes the parameters for the system or simulator
+
+        Args:
+            simulator: qsim or cirq simulator that is defined by the user
+            noise_model: optional argument to define the noise model
+            param_resolver: Optional arg that defines the parameters to run with the program.
+            qubit_order: Optional arg that defines the ordering of qubits.
+        """
         super().__init__()
         self.noise_model = noise_model
         self.simulator = simulator

@@ -110,7 +110,9 @@ class TestCirqSimulator(QuantumSimulatorTests):
         expectation_values = simulator.get_exact_noisy_expectation_values(
             circuit, qubit_operator
         )
-        np.testing.assert_almost_equal(expectation_values.values[0], target_values[0])
+        np.testing.assert_almost_equal(
+            expectation_values.values[0], target_values[0], 2
+        )
         np.testing.assert_almost_equal(expectation_values.values[1], target_values[1])
 
     def test_run_circuit_and_measure_seed(self):
@@ -143,4 +145,5 @@ class TestCirqSimulator(QuantumSimulatorTests):
 
 
 class TestCirqSimulatorGates(QuantumSimulatorGatesTest):
+    atol_wavefunction = 1e-8
     pass

@@ -22,19 +22,24 @@ class QSimSimulator(CirqBasedSimulator):
 
     Args:
         noise_model: an optional noise model to pass in for noisy simulations
-        seed: seed for random number generator.
         param_resolver: Optional arg that defines the
         parameters to run with the program.
         qubit_order: Optional arg that defines the ordering of qubits.
+        seed: seed for random number generator.
         circuit_memoization_size: Optional arg tht defines the number of
         last translated circuits to be memoized from simulation executions,
         to eliminate translation overhead.
+        qsim_options:  An options dict or QSimOptions object with options
+        to use for all circuits run using this simulator. See QSimOptions from
+        qsimcirq for more details.
 
     Attributes:
+        simulator: Qsim simulator this class uses with the options defined.
         noise_model: an optional noise model to pass in for noisy simulations
         qubit_order: qubit_order: Optional arg that defines the ordering of qubits.
         param_resolver: param_resolver: Optional arg that defines the
         parameters to run with the program.
+        qubit_order: Optional arg that defines the ordering of qubits.
     """
 
     supports_batching = True
@@ -43,7 +48,7 @@ class QSimSimulator(CirqBasedSimulator):
     def __init__(
         self,
         noise_model=None,
-        param_resolver: "cirq.ParamResolverOrSimilarType" = None,
+        param_resolver: Optional[cirq.ParamResolverOrSimilarType] = None,
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
         seed: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
         circuit_memoization_size: int = 0,
