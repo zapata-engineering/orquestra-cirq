@@ -58,7 +58,8 @@ class CirqBasedSimulator(QuantumSimulator):
         Args:
             simulator: qsim or cirq simulator that is defined by the user
             noise_model: optional argument to define the noise model
-            param_resolver: Optional arg that defines the parameters to run with the program.
+            param_resolver: Optional arg that defines the parameters
+            to run with the program.
             qubit_order: Optional arg that defines the ordering of qubits.
         """
         super().__init__()
