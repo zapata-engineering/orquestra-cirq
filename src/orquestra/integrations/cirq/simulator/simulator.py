@@ -19,38 +19,31 @@ class CirqSimulator(CirqBasedSimulator):
 
     """Simulator using a cirq device (simulator or QPU).
 
-    Currently this Simulator uses cirq.Simulator if noise_model is None and
-    cirq.DensityMatrixSimulator otherwise.
-
     Args:
         noise_model: an optional noise model to pass in for noisy simulations
         seed: seed for random number generator.
+        param_resolver: Optional arg that defines the
+        parameters to run with the program.
+        qubit_order: Optional arg that defines the ordering of qubits.
 
     Attributes:
         noise_model: an optional noise model to pass in for noisy simulations
         simulator: Cirq simulator this class uses.
+        param_resolver: Optional arg that defines the
+        parameters to run with the program.
+        qubit_order: Optional arg that defines the ordering of qubits.
     """
 
     supports_batching = True
     batch_size = sys.maxsize
 
-    def __init__(self, noise_model=None, seed: int = None):
-        simulator = (
-            cirq.DensityMatrixSimulator(dtype=np.complex128, seed=seed)
-            if noise_model is not None
-            else cirq.Simulator(seed=seed)
-        )
+    def __init__(
+        self,
+        noise_model=None,
+        seed: int = None,
+        param_resolver: "cirq.ParamResolverOrSimilarType" = None,
+        qubit_order=cirq.ops.QubitOrder.DEFAULT,
+    ):
+        simulator = cirq.Simulator(seed=seed)
 
-        super().__init__(simulator, noise_model)
-
-    def _get_wavefunction_from_native_circuit(
-        self, circuit: Circuit, initial_state: StateVector
-    ) -> StateVector:
-
-        cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
-        return cirq_circuit.final_state_vector(
-            initial_state=cast(cirq.STATE_VECTOR_LIKE, initial_state)
-        )
-
-    def _extract_density_matrix(self, result):
-        return result.final_density_matrix
+        super().__init__(simulator, noise_model, param_resolver, qubit_order)
