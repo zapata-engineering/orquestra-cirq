@@ -156,6 +156,10 @@ class TestQsimSimulator(QuantumSimulatorTests):
             assert ampl1 == ampl2
 
 
+@pytest.mark.skipif(
+    sys.version_info > (3, 9),
+    reason="QsimSimulator does not work on Python 3.10 or above",
+)
 class TestQSimSimulatorGates(QuantumSimulatorGatesTest):
     atol_wavefunction = 5e-7
 
