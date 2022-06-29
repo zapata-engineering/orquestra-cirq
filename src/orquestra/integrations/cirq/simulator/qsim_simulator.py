@@ -2,15 +2,19 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 import sys
-from typing import Dict, Optional, Union, cast
+import warnings
+from typing import Dict, Optional, Union
 
 import cirq
-import numpy as np
-import qsimcirq
-from orquestra.quantum.api.backend import StateVector
-from orquestra.quantum.circuits import Circuit
 
-from ..conversions import export_to_cirq
+try:
+    import qsimcirq
+except ModuleNotFoundError:
+    warnings.warn(
+        "qsimcirq is not imported. This library does not work with Python 3.10.0 or higher"
+    )
+from orquestra.quantum.api.backend import StateVector
+
 from ._base import CirqBasedSimulator
 
 
