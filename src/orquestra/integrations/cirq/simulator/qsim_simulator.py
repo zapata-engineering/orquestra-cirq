@@ -11,7 +11,8 @@ try:
     import qsimcirq
 except ModuleNotFoundError:
     warnings.warn(
-        "qsimcirq is not imported. This library does not work with Python 3.10.0 or higher"
+        "qsimcirq is not imported. This library does not work with \n"
+        "Python 3.10.0 or higher"
     )
 from orquestra.quantum.api.backend import StateVector
 
