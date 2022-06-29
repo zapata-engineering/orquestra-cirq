@@ -3,7 +3,7 @@
 ################################################################################
 import sys
 import warnings
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import cirq
 
@@ -14,8 +14,6 @@ except ModuleNotFoundError:
         "qsimcirq is not imported. This library does not work with \n"
         "Python 3.10.0 or higher"
     )
-from orquestra.quantum.api.backend import StateVector
-
 from ._base import CirqBasedSimulator
 
 
@@ -57,7 +55,7 @@ class QSimSimulator(CirqBasedSimulator):
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
         seed: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
         circuit_memoization_size: int = 0,
-        qsim_options: Optional[Union[Dict, qsimcirq.QSimOptions]] = None,
+        qsim_options: Optional[Union[Dict, "qsimcirq.QSimOptions"]] = None,
     ):
 
         simulator = qsimcirq.QSimSimulator(
