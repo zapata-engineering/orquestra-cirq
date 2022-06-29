@@ -8,7 +8,7 @@ from typing import Dict, List, Optional, Union
 import cirq
 
 try:
-    import qsimcirq
+    import qsimcirq  # type: ignore
 except ModuleNotFoundError:
     warnings.warn(
         "qsimcirq is not imported. This library does not work with \n"
