@@ -1,6 +1,8 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
+import sys
+
 import numpy as np
 import pytest
 from cirq import depolarize
@@ -26,6 +28,10 @@ def wf_simulator():
     return QSimSimulator()
 
 
+@pytest.mark.skipif(
+    sys.version_info > (3, 9),
+    reason="QsimSimulator does not work on Python 3.10 or above",
+)
 class TestQsimSimulator(QuantumSimulatorTests):
     def test_setup_basic_simulators(self):
         simulator = QSimSimulator()
@@ -150,6 +156,10 @@ class TestQsimSimulator(QuantumSimulatorTests):
             assert ampl1 == ampl2
 
 
+@pytest.mark.skipif(
+    sys.version_info > (3, 9),
+    reason="QsimSimulator does not work on Python 3.10 or above",
+)
 class TestQSimSimulatorGates(QuantumSimulatorGatesTest):
     atol_wavefunction = 5e-7
 

@@ -2,15 +2,18 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 import sys
-from typing import Dict, Optional, Union, cast
+import warnings
+from typing import Dict, List, Optional, Union
 
 import cirq
-import numpy as np
-import qsimcirq
-from orquestra.quantum.api.backend import StateVector
-from orquestra.quantum.circuits import Circuit
 
-from ..conversions import export_to_cirq
+try:
+    import qsimcirq  # type: ignore
+except ModuleNotFoundError:
+    warnings.warn(
+        "qsimcirq is not imported. This library does not work with \n"
+        "Python 3.10.0 or higher"
+    )
 from ._base import CirqBasedSimulator
 
 
@@ -52,7 +55,7 @@ class QSimSimulator(CirqBasedSimulator):
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
         seed: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
         circuit_memoization_size: int = 0,
-        qsim_options: Optional[Union[Dict, qsimcirq.QSimOptions]] = None,
+        qsim_options: Optional[Union[Dict, "qsimcirq.QSimOptions"]] = None,
     ):
 
         simulator = qsimcirq.QSimSimulator(
