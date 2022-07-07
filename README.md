@@ -8,7 +8,7 @@
 
 Even though it's intended to be used with Orquestra, `orquestra-cirq` can be also used as a Python module.
 To install it, make to install `orquestra-quantum` first. Then you just need to run `pip install .` from the main directory.
-If you want to import `QSimSimulator`, you are requried to run `pip install -e .[qsim].` 
+If you want to import `QSimSimulator`, you are requried to run `pip install -e .[qsim]`. 
 ## Overview
 
 `orquestra-cirq` is a Python module that exposes Cirq's and qsim's simulators as an [`orquestra`](https://github.com/zapatacomputing/orquestra-quantum/blob/main/src/orquestra/quantum/api/backend.py) `QuantumSimulator`. They can be imported with:
