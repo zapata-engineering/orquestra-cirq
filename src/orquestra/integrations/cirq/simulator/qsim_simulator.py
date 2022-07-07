@@ -55,7 +55,7 @@ class QSimSimulator(CirqBasedSimulator):
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
         seed: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
         circuit_memoization_size: int = 0,
-        qsim_options: Optional[Union[Dict, "qsimcirq.QSimOptions"]] = None,
+        qsim_options: Optional["qsimcirq.QSimOptions"] = None,
     ):
 
         simulator = qsimcirq.QSimSimulator(
