@@ -19,7 +19,6 @@ class QSimSimulator(CirqBasedSimulator):
     """Integration with qsim simulator.
     In order to run on GPU using cuStateVec (https://docs.nvidia.com/cuda/cuquantum/custatevec/index.html)
     please provide `use_gpu=True` and `gpu_mode=1` in `qsim_options`.
-    Visit https://quantumai.google/qsim to learn more about qsimcirq.
 
     Args:
         noise_model: an optional noise model to pass in for noisy simulations
@@ -41,7 +40,7 @@ class QSimSimulator(CirqBasedSimulator):
         param_resolver: param_resolver: Optional arg that defines the
         parameters to run with the program.
         qubit_order: Optional arg that defines the ordering of qubits.
-    """  # noqa: E501
+    """
 
     supports_batching = True
     batch_size = sys.maxsize
