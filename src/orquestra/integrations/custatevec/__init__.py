@@ -1,0 +1,1 @@
+from ..cirq.simulator.qsim_simulator import QSimSimulator as CustatevecSimulator
