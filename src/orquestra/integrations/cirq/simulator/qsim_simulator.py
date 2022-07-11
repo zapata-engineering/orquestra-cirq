@@ -15,7 +15,6 @@ from ._base import CirqBasedSimulator
 
 
 class QSimSimulator(CirqBasedSimulator):
-
     """Simulator using a qsimcirq simulator which is optimized for GPU
     using cuStateVec (https://docs.nvidia.com/cuda/cuquantum/custatevec/index.html).
     Visit https://quantumai.google/qsim to learn more about qsimcirq.
