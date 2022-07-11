@@ -17,6 +17,31 @@ except ModuleNotFoundError:
 
 
 class CustatevecSimulator(CirqBasedSimulator):
+
+    """CustatevecSimulator is qsimcirq simulator that
+       uses GPU for all simulation.
+    Args:
+        noise_model: an optional noise model to pass in for noisy simulations
+        param_resolver: Optional arg that defines the
+        parameters to run with the program.
+        qubit_order: Optional arg that defines the ordering of qubits.
+        seed: seed for random number generator.
+        circuit_memoization_size: Optional arg tht defines the number of
+        last translated circuits to be memoized from simulation executions,
+        to eliminate translation overhead.
+        qsim_options:  An options dict or QSimOptions object with options
+        to use for all circuits run using this simulator. See QSimOptions from
+        qsimcirq for more details.
+
+    Attributes:
+        simulator: Qsim simulator this class uses with the options defined.
+        noise_model: an optional noise model to pass in for noisy simulations
+        qubit_order: qubit_order: Optional arg that defines the ordering of qubits.
+        param_resolver: param_resolver: Optional arg that defines the
+        parameters to run with the program.
+        qubit_order: Optional arg that defines the ordering of qubits.
+    """
+
     supports_batching = True
     batch_size = sys.maxsize
 
