@@ -1,19 +1,23 @@
-from ...cirq.simulator.qsim_simulator import QSimSimulator
+################################################################################
+# © Copyright 2021-2022 Zapata Computing Inc.
+################################################################################
+
+import sys
+import warnings
+from typing import Optional
 
 import cirq
+
+from ...cirq.simulator._base import CirqBasedSimulator
 
 try:
     import qsimcirq  # type: ignore
 except ModuleNotFoundError:
-    warnings.warn(
-        "qsimcirq is not imported. This library does not work with \n"
-        "Python 3.10.0 or higher"
-    )
+    warnings.warn("qsimcirq is not imported")
 
 
-
-class CustatevecSimulator(QSimSimulator):
-        supports_batching = True
+class CustatevecSimulator(CirqBasedSimulator):
+    supports_batching = True
     batch_size = sys.maxsize
 
     def __init__(
@@ -26,7 +30,10 @@ class CustatevecSimulator(QSimSimulator):
         qsim_options: Optional["qsimcirq.QSimOptions"] = None,
     ):
 
-        qsim_options.use_gpu = True
+        if qsim_options is None:
+            qsim_options = qsimcirq.QSimOptions(use_gpu=True)
+        else:
+            qsim_options.use_gpu = True
 
         simulator = qsimcirq.QSimSimulator(
             qsim_options=qsim_options,

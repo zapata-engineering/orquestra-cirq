@@ -3,17 +3,14 @@
 ################################################################################
 import sys
 import warnings
-from typing import Dict, List, Optional, Union
+from typing import Optional
 
 import cirq
 
 try:
     import qsimcirq  # type: ignore
 except ModuleNotFoundError:
-    warnings.warn(
-        "qsimcirq is not imported. This library does not work with \n"
-        "Python 3.10.0 or higher"
-    )
+    warnings.warn("qsimcirq is not imported")
 from ._base import CirqBasedSimulator
 
 
