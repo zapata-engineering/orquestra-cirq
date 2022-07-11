@@ -19,7 +19,9 @@ except ModuleNotFoundError:
 class CustatevecSimulator(QSimSimulator):
 
     """CustatevecSimulator is qsimcirq simulator that
-       uses GPU for all simulation.
+       uses Nvidia GPUs for all simulation. CUDA toolkit and some dependency tools
+       must be installed. The installation guidelines are provided in 
+       https://quantumai.google/qsim/tutorials/gcp_gpu. 
     Args:
         noise_model: an optional noise model to pass in for noisy simulations
         param_resolver: Optional arg that defines the
