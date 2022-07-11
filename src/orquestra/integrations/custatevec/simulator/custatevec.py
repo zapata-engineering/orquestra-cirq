@@ -8,7 +8,7 @@ from typing import Optional
 
 import cirq
 
-from ...cirq.simulator._base import CirqBasedSimulator
+from ...cirq.simulator.qsim_simulator import QSimSimulator
 
 try:
     import qsimcirq  # type: ignore
@@ -16,7 +16,7 @@ except ModuleNotFoundError:
     warnings.warn("qsimcirq is not imported")
 
 
-class CustatevecSimulator(CirqBasedSimulator):
+class CustatevecSimulator(QSimSimulator):
 
     """CustatevecSimulator is qsimcirq simulator that
        uses GPU for all simulation.
@@ -33,13 +33,6 @@ class CustatevecSimulator(CirqBasedSimulator):
         to use for all circuits run using this simulator. See QSimOptions from
         qsimcirq for more details.
 
-    Attributes:
-        simulator: Qsim simulator this class uses with the options defined.
-        noise_model: an optional noise model to pass in for noisy simulations
-        qubit_order: qubit_order: Optional arg that defines the ordering of qubits.
-        param_resolver: param_resolver: Optional arg that defines the
-        parameters to run with the program.
-        qubit_order: Optional arg that defines the ordering of qubits.
     """
 
     supports_batching = True
@@ -60,10 +53,11 @@ class CustatevecSimulator(CirqBasedSimulator):
         else:
             qsim_options.use_gpu = True
 
-        simulator = qsimcirq.QSimSimulator(
-            qsim_options=qsim_options,
+        super().__init__(
+            noise_model=noise_model,
+            param_resolver=param_resolver,
+            qubit_order=qubit_order,
             seed=seed,
             circuit_memoization_size=circuit_memoization_size,
+            qsim_options=qsim_options,
         )
-
-        super().__init__(simulator, noise_model, param_resolver, qubit_order)
