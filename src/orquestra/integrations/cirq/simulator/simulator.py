@@ -32,7 +32,7 @@ class CirqSimulator(CirqBasedSimulator):
 
     def __init__(
         self,
-        noise_model=None,
+        noise_model: cirq.NOISE_MODEL_LIKE = None,
         seed: int = None,
         param_resolver: "cirq.ParamResolverOrSimilarType" = None,
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
