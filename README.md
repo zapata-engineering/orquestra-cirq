@@ -15,13 +15,13 @@ If you want to import `QSimSimulator`, you are requried to run `pip install -e .
 
 ```
 from orquestra.integrations.cirq.simulator import CirqSimulator
-from orquestra.integrations.cirq.simulator.qsim_simulator import QSimSimulator
+from orquestra.integrations.cirq.simulator import QSimSimulator
 ```
 
 The parameters to configure GPU executions are supplied to `QSimSimulator` as `QSimOptions`. The details of these parameters can be found in [qsimcirq python interface](https://quantumai.google/qsim/cirq_interface#gpu_execution). Below is an example of passing `use_gpu` parameter to the `QSimSimulator`:
 
 ```
-from orquestra.integrations.cirq.simulator.qsim_simulator import QSimSimulator
+from orquestra.integrations.cirq.simulator import QSimSimulator
 
 from qsimcirq import QSimOptions
 

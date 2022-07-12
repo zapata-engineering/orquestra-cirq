@@ -15,7 +15,7 @@ from orquestra.quantum.api.backend_test import (
 from orquestra.quantum.circuits import CNOT, Circuit, H, X
 from orquestra.quantum.openfermion.ops import QubitOperator
 
-from orquestra.integrations.cirq.simulator.qsim_simulator import QSimSimulator
+from orquestra.integrations.cirq.simulator import QSimSimulator
 
 
 @pytest.fixture()
