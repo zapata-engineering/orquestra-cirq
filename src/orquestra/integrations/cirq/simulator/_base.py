@@ -2,9 +2,8 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 
-import abc
 import sys
-from typing import List, Sequence, Union, cast
+from typing import List, Sequence, cast
 
 import cirq
 import numpy as np
@@ -49,7 +48,7 @@ class CirqBasedSimulator(QuantumSimulator):
     def __init__(
         self,
         simulator,
-        noise_model=None,
+        noise_model: cirq.NOISE_MODEL_LIKE = None,
         param_resolver: cirq.ParamResolverOrSimilarType = None,
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
     ):
