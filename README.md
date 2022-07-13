@@ -18,24 +18,26 @@ from orquestra.integrations.cirq.simulator import CirqSimulator
 from orquestra.integrations.cirq.simulator import QSimSimulator
 ```
 
-The parameters to configure GPU executions are supplied to `QSimSimulator` as `QSimOptions`. The details of these parameters can be found in [qsimcirq python interface](https://quantumai.google/qsim/cirq_interface#gpu_execution). In order to use the GPU and `cuStateVec`, both `use_gpu` and `gpu_mode` arguments needs to supplied to the `QSimSimulator` as follows:
-
-```
-from orquestra.integrations.cirq.simulator import QSimSimulator
-
-from qsimcirq import QSimOptions
-
-qsim_options = QSimOptions(use_gpu=True, gpu_mode = 1)
-
-sim = QSimSimulator(qsim_options=qsim_options)
-```
-
 In addition, it interfaces with the noise models and provides converters that allow switching between `cirq` circuits and those of `orquestra`.
 
 The module can be used directly in Python or in an [Orquestra](https://www.orquestra.io) workflow.
 For more details, see the [Orquestra Core docs](https://zapatacomputing.github.io/orquestra-core/index.html).
 
 For more information regarding Orquestra and resources, please refer to the [Orquestra documentation](https://www.orquestra.io/docs).
+
+## Running on GPU
+The parameters to configure GPU executions are supplied to `QSimSimulator` as `QSimOptions`. The details of these parameters can be found in [qsimcirq python interface](https://quantumai.google/qsim/cirq_interface#gpu_execution). Passing `use_gpu=True` will enable gpu. If you want to use [NVIDIA's cuStateVec](https://docs.nvidia.com/cuda/cuquantum/custatevec/index.html), please additionally pass `gpu_mode=1` as can be seen in the example below:
+
+```
+from orquestra.integrations.cirq.simulator import QSimSimulator
+
+from qsimcirq import QSimOptions
+
+qsim_options = QSimOptions(use_gpu=True, gpu_mode=1)
+
+sim = QSimSimulator(qsim_options=qsim_options)
+```
+
 
 ## Development and contribution
 
