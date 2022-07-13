@@ -18,14 +18,14 @@ from orquestra.integrations.cirq.simulator import CirqSimulator
 from orquestra.integrations.cirq.simulator import QSimSimulator
 ```
 
-The parameters to configure GPU executions are supplied to `QSimSimulator` as `QSimOptions`. The details of these parameters can be found in [qsimcirq python interface](https://quantumai.google/qsim/cirq_interface#gpu_execution). Below is an example of passing `use_gpu` parameter to the `QSimSimulator`:
+The parameters to configure GPU executions are supplied to `QSimSimulator` as `QSimOptions`. The details of these parameters can be found in [qsimcirq python interface](https://quantumai.google/qsim/cirq_interface#gpu_execution). In order to use the GPU and `cuStateVec`, both `use_gpu` and `gpu_mode` arguments needs to supplied to the `QSimSimulator` as follows:
 
 ```
 from orquestra.integrations.cirq.simulator import QSimSimulator
 
 from qsimcirq import QSimOptions
 
-qsim_options = QSimOptions(use_gpu=True)
+qsim_options = QSimOptions(use_gpu=True, gpu_mode = 1)
 
 sim = QSimSimulator(qsim_options=qsim_options)
 ```
