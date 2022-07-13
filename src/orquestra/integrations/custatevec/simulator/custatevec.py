@@ -54,6 +54,7 @@ class CustatevecSimulator(QSimSimulator):
             qsim_options = qsimcirq.QSimOptions(use_gpu=True, gpu_mode=1)
         else:
             qsim_options.use_gpu = True
+            qsim_options.gpu_mode = 1
 
         super().__init__(
             noise_model=noise_model,
