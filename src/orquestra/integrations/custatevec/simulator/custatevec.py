@@ -51,7 +51,7 @@ class CustatevecSimulator(QSimSimulator):
     ):
 
         if qsim_options is None:
-            qsim_options = qsimcirq.QSimOptions(use_gpu=True)
+            qsim_options = qsimcirq.QSimOptions(use_gpu=True, gpu_mode=1)
         else:
             qsim_options.use_gpu = True
 
