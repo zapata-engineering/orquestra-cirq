@@ -6,6 +6,11 @@ from typing import Dict, Union
 
 import numpy as np
 from cirq import (
+    NOISE_MODEL_LIKE,
+    AmplitudeDampingChannel,
+    AsymmetricDepolarizingChannel,
+    DepolarizingChannel,
+    PhaseDampingChannel,
     amplitude_damp,
     asymmetric_depolarize,
     depolarize,
@@ -14,7 +19,7 @@ from cirq import (
 )
 
 
-def get_depolarizing_channel(T, t_gate=10e-9):
+def get_depolarizing_channel(T: float, t_gate: float = 10e-9) -> DepolarizingChannel:
     """Get the depolarizing channel
 
     Args:
@@ -29,7 +34,9 @@ def get_depolarizing_channel(T, t_gate=10e-9):
     return noise_model
 
 
-def get_asymmetric_depolarize(T_1: float, T_2: float, t_gate: float = 10e-9):
+def get_asymmetric_depolarize(
+    T_1: float, T_2: float, t_gate: float = 10e-9
+) -> AsymmetricDepolarizingChannel:
     """Creates a noise model that does both phase and amplitude damping but in the
         Pauli Twirling Approximation discussed in the following reference
         https://arxiv.org/pdf/1305.2021.pdf
@@ -71,7 +78,7 @@ def get_asymmetric_depolarize(T_1: float, T_2: float, t_gate: float = 10e-9):
     return noise_model
 
 
-def get_amplitude_damping(T_1: float, t_gate: float = 10e-9):
+def get_amplitude_damping(T_1: float, t_gate: float = 10e-9) -> AmplitudeDampingChannel:
     """Creates an amplitude damping noise model
 
     Args:
@@ -87,7 +94,7 @@ def get_amplitude_damping(T_1: float, t_gate: float = 10e-9):
     return noise_model
 
 
-def get_phase_damping(T_2: float, t_gate: float = 10e-9):
+def get_phase_damping(T_2: float, t_gate: float = 10e-9) -> PhaseDampingChannel:
     """Creates a dephasing noise model
 
     Args:
@@ -107,7 +114,7 @@ def get_phase_damping(T_2: float, t_gate: float = 10e-9):
 }
 
 
-def load_noise_model_from_json(serialized_model: Union[Dict, str]):
+def load_noise_model_from_json(serialized_model: Union[Dict, str]) -> NOISE_MODEL_LIKE:
     """Loads a cirq noise model (version 2)
 
     Args:

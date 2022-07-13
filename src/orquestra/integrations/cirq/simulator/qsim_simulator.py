@@ -46,7 +46,7 @@ class QSimSimulator(CirqBasedSimulator):
 
     def __init__(
         self,
-        noise_model=None,
+        noise_model: cirq.NOISE_MODEL_LIKE = None,
         param_resolver: Optional[cirq.ParamResolverOrSimilarType] = None,
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
         seed: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
