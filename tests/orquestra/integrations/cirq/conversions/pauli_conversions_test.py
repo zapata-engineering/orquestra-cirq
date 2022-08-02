@@ -1,72 +1,70 @@
 ################################################################################
-# © Copyright 2021-2022 Zapata Computing Inc.
+# © Copyright 2021-2022*Zapata Computing Inc.
 ################################################################################
 import unittest
 
-from cirq import GridQubit, LineQubit, PauliString, PauliSum, X, Y, Z
-from orquestra.quantum.openfermion import QubitOperator
+from cirq import GridQubit, LineQubit, PauliString, PauliSum as CirqPauliSum, X, Y, Z
+from orquestra.quantum.wip.operators import PauliTerm
 
-from orquestra.integrations.cirq.conversions import qubitop_to_paulisum
+from orquestra.integrations.cirq.conversions import pauliop_to_cirq_paulisum
 
 
 class TestQubitOperator(unittest.TestCase):
-    def test_qubitop_to_paulisum_identity_operator(self):
+    def test_pauliop_to_cirq_paulisum_identity_operator(self):
         # Given
-        qubit_operator = QubitOperator("", 4)
+        qubit_operator = PauliTerm.identity() * 4
 
         # When
-        paulisum = qubitop_to_paulisum(qubit_operator)
+        paulisum = pauliop_to_cirq_paulisum(qubit_operator)
 
         # Then
         self.assertEqual(paulisum.qubits, ())
-        self.assertEqual(paulisum, PauliSum() + 4)
+        self.assertEqual(paulisum, CirqPauliSum() + 4)
 
-    def test_qubitop_to_paulisum_z0z1_operator(self):
+    def test_pauliop_to_cirq_paulisum_z0z1_operator(self):
         # Given
-        qubit_operator = QubitOperator("Z0 Z1", -1.5)
+        qubit_operator = PauliTerm("Z0*Z1", -1.5)
         expected_qubits = (GridQubit(0, 0), GridQubit(1, 0))
         expected_paulisum = (
-            PauliSum()
+            CirqPauliSum()
             + PauliString(Z.on(expected_qubits[0]))
             * PauliString(Z.on(expected_qubits[1]))
             * -1.5
         )
 
         # When
-        paulisum = qubitop_to_paulisum(qubit_operator)
+        paulisum = pauliop_to_cirq_paulisum(qubit_operator)
 
         # Then
         self.assertEqual(paulisum.qubits, expected_qubits)
         self.assertEqual(paulisum, expected_paulisum)
 
-    def test_qubitop_to_paulisum_setting_qubits(self):
+    def test_pauliop_to_cirq_paulisum_setting_qubits(self):
         # Given
-        qubit_operator = QubitOperator("Z0 Z1", -1.5)
+        qubit_operator = PauliTerm("Z0*Z1", -1.5)
         expected_qubits = (LineQubit(0), LineQubit(5))
         expected_paulisum = (
-            PauliSum()
+            CirqPauliSum()
             + PauliString(Z.on(expected_qubits[0]))
             * PauliString(Z.on(expected_qubits[1]))
             * -1.5
         )
 
         # When
-        paulisum = qubitop_to_paulisum(qubit_operator, qubits=expected_qubits)
+        paulisum = pauliop_to_cirq_paulisum(qubit_operator, qubits=expected_qubits)
 
         # Then
         self.assertEqual(paulisum.qubits, expected_qubits)
         self.assertEqual(paulisum, expected_paulisum)
 
-    def test_qubitop_to_paulisum_more_terms(self):
+    def test_pauliop_to_cirq_paulisum_more_terms(self):
         # Given
         qubit_operator = (
-            QubitOperator("Z0 Z1 Z2", -1.5)
-            + QubitOperator("X0", 2.5)
-            + QubitOperator("Y1", 3.5)
+            PauliTerm("Z0*Z1*Z2", -1.5) + PauliTerm("X0", 2.5) + PauliTerm("Y1", 3.5)
         )
         expected_qubits = (LineQubit(0), LineQubit(5), LineQubit(8))
         expected_paulisum = (
-            PauliSum()
+            CirqPauliSum()
             + (
                 PauliString(Z.on(expected_qubits[0]))
                 * PauliString(Z.on(expected_qubits[1]))
@@ -78,7 +76,7 @@ class TestQubitOperator(unittest.TestCase):
         )
 
         # When
-        paulisum = qubitop_to_paulisum(qubit_operator, qubits=expected_qubits)
+        paulisum = pauliop_to_cirq_paulisum(qubit_operator, qubits=expected_qubits)
 
         # Then
         self.assertEqual(paulisum.qubits, expected_qubits)

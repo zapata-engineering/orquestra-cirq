@@ -13,7 +13,7 @@ from orquestra.quantum.api.backend_test import (
     QuantumSimulatorTests,
 )
 from orquestra.quantum.circuits import CNOT, Circuit, H, X
-from orquestra.quantum.openfermion.ops import QubitOperator
+from orquestra.quantum.wip.operators import PauliSum
 
 from orquestra.integrations.cirq.simulator import QSimSimulator
 
@@ -97,7 +97,7 @@ class TestQsimSimulator(QuantumSimulatorTests):
         # Given
         simulator = QSimSimulator()
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
-        qubit_operator = QubitOperator("2[] - [Z0 Z1] + [X0 X2]")
+        qubit_operator = PauliSum("2*I0 + -1*Z0*Z1 + X0*X2")
         target_values = np.array([2.0, -1.0, 0.0])
 
         # When
@@ -114,7 +114,7 @@ class TestQsimSimulator(QuantumSimulatorTests):
         noise_model = depolarize(p=noise)
         simulator = QSimSimulator(noise_model=noise_model)
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
-        qubit_operator = QubitOperator("-[Z0 Z1] + [X0 X2]")
+        qubit_operator = PauliSum("-1*Z0*Z1 + X0*X2")
         target_values = np.array([-0.9986673775881747, 0.0])
 
         expectation_values = simulator.get_exact_noisy_expectation_values(
