@@ -3,7 +3,9 @@
 ################################################################################
 import unittest
 
-from cirq import GridQubit, LineQubit, PauliString, PauliSum as CirqPauliSum, X, Y, Z
+from cirq import GridQubit, LineQubit, PauliString
+from cirq import PauliSum as CirqPauliSum
+from cirq import X, Y, Z
 from orquestra.quantum.wip.operators import PauliTerm
 
 from orquestra.integrations.cirq.conversions import pauliop_to_cirq_paulisum
