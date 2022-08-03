@@ -35,7 +35,7 @@ def pauliop_to_cirq_paulisum(
             continue
 
         cirq_term: cirq.PauliString = cirq.PauliString()
-        for qubit_index, operator in term._ops.items():
+        for qubit_index, operator in term.operations:
             cirq_term *= operator_map[operator](qubits[qubit_index])
         converted_sum += cirq_term * term.coefficient
 
