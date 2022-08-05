@@ -4,18 +4,19 @@
 from typing import List, Union
 
 import cirq
-from orquestra.quantum.openfermion import QubitOperator, count_qubits
+from orquestra.quantum.openfermion import count_qubits
+from orquestra.quantum.wip.operators import PauliRepresentation
 
 
-def qubitop_to_paulisum(
-    qubit_operator: QubitOperator,
+def pauliop_to_cirq_paulisum(
+    pauli_operator: PauliRepresentation,
     qubits: Union[List[cirq.GridQubit], List[cirq.LineQubit]] = None,
 ) -> cirq.PauliSum:
-    """Convert and openfermion QubitOperator to a cirq PauliSum
+    """Convert an orquestra PauliSum or PauliTerm to a cirq PauliSum
 
     Args:
-        qubit_operator (openfermion.QubitOperator): The openfermion operator to convert
-        qubits()
+        pauli_operator: The openfermion operator to convert
+        qubits: The qubits the operator is applied to
 
     Returns:
         cirq.PauliSum
@@ -23,19 +24,19 @@ def qubitop_to_paulisum(
     operator_map = {"X": cirq.X, "Y": cirq.Y, "Z": cirq.Z}
 
     if qubits is None:
-        qubits = [cirq.GridQubit(i, 0) for i in range(count_qubits(qubit_operator))]
+        qubits = [cirq.GridQubit(i, 0) for i in range(count_qubits(pauli_operator))]
 
     converted_sum = cirq.PauliSum()
-    for term, coefficient in qubit_operator.terms.items():
+    for term in pauli_operator.terms:
 
         # Identity term
-        if len(term) == 0:
-            converted_sum += coefficient
+        if term.is_constant:
+            converted_sum += term.coefficient
             continue
 
         cirq_term: cirq.PauliString = cirq.PauliString()
-        for qubit_index, operator in term:
+        for qubit_index, operator in term.operations:
             cirq_term *= operator_map[operator](qubits[qubit_index])
-        converted_sum += cirq_term * coefficient
+        converted_sum += cirq_term * term.coefficient
 
     return converted_sum
