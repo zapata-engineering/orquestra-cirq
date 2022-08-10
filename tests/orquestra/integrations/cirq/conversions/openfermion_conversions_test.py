@@ -1,6 +1,5 @@
 import pytest
-from openfermion import IsingOperator, QubitOperator
-from openfermion.testing import random_qubit_operator
+from openfermion import IsingOperator, QubitOperator, random_qubit_operator
 from orquestra.quantum.operators import PauliSum, PauliTerm
 
 from orquestra.integrations.cirq.conversions import from_openfermion, to_openfermion
