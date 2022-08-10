@@ -187,7 +187,7 @@ class CirqBasedSimulator(QuantumSimulator):
         cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
         values = []
 
-        for pauli_term in qubit_operator:
+        for pauli_term in qubit_operator.terms:
             sparse_pauli_term_ndarray = get_sparse_operator(
                 pauli_term, n_qubits=circuit.n_qubits
             ).toarray()
