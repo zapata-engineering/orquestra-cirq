@@ -4,8 +4,7 @@
 from typing import List, Union
 
 import cirq
-from orquestra.quantum.openfermion import count_qubits
-from orquestra.quantum.wip.operators import PauliRepresentation
+from orquestra.quantum.operators import PauliRepresentation
 
 
 def pauliop_to_cirq_paulisum(
@@ -24,7 +23,7 @@ def pauliop_to_cirq_paulisum(
     operator_map = {"X": cirq.X, "Y": cirq.Y, "Z": cirq.Z}
 
     if qubits is None:
-        qubits = [cirq.GridQubit(i, 0) for i in range(count_qubits(pauli_operator))]
+        qubits = [cirq.GridQubit(i, 0) for i in range(pauli_operator.n_qubits)]
 
     converted_sum = cirq.PauliSum()
     for term in pauli_operator.terms:

@@ -14,8 +14,7 @@ from orquestra.quantum.measurements import (
     Measurements,
     expectation_values_to_real,
 )
-from orquestra.quantum.openfermion import get_sparse_operator
-from orquestra.quantum.wip.operators import PauliRepresentation
+from orquestra.quantum.operators import PauliRepresentation, get_sparse_operator
 
 from ..conversions import export_to_cirq
 
@@ -149,7 +148,7 @@ class CirqBasedSimulator(QuantumSimulator):
 
             values = []
 
-            for pauli_term in qubit_operator:
+            for pauli_term in qubit_operator.terms:
                 sparse_pauli_term_ndarray = get_sparse_operator(
                     pauli_term, n_qubits=circuit.n_qubits
                 ).toarray()
@@ -188,7 +187,7 @@ class CirqBasedSimulator(QuantumSimulator):
         cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
         values = []
 
-        for pauli_term in qubit_operator:
+        for pauli_term in qubit_operator.terms:
             sparse_pauli_term_ndarray = get_sparse_operator(
                 pauli_term, n_qubits=circuit.n_qubits
             ).toarray()
