@@ -1,4 +1,4 @@
-from openfermion import QubitOperator, SymbolicOperator
+from openfermion import QubitOperator, SymbolicOperator  # type: ignore
 from orquestra.quantum.operators import PauliRepresentation, PauliSum, PauliTerm
 
 
