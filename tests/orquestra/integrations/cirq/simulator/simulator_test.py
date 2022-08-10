@@ -9,7 +9,7 @@ from orquestra.quantum.api.backend_test import (
     QuantumSimulatorTests,
 )
 from orquestra.quantum.circuits import CNOT, Circuit, H, X
-from orquestra.quantum.wip.operators import PauliSum
+from orquestra.quantum.operators import PauliSum
 
 from orquestra.integrations.cirq.simulator import CirqSimulator
 

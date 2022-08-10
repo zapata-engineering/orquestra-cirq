@@ -5,7 +5,7 @@ from typing import List, Union
 
 import cirq
 from orquestra.quantum.openfermion import count_qubits
-from orquestra.quantum.wip.operators import PauliRepresentation
+from orquestra.quantum.operators import PauliRepresentation
 
 
 def pauliop_to_cirq_paulisum(

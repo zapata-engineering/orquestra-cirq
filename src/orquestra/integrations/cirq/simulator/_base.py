@@ -15,7 +15,7 @@ from orquestra.quantum.measurements import (
     expectation_values_to_real,
 )
 from orquestra.quantum.openfermion import get_sparse_operator
-from orquestra.quantum.wip.operators import PauliRepresentation
+from orquestra.quantum.operators import PauliRepresentation
 
 from ..conversions import export_to_cirq
 
