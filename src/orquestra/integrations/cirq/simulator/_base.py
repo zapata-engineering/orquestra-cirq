@@ -244,7 +244,7 @@ def get_measurement_from_cirq_result_object(
     numpy_samples = list(
         zip(
             *(
-                result_object.measurements.get(f"q({sub_key})", [[0]] * 5)
+                result_object.measurements.get(f"q({sub_key})", [[0]] * n_samples)
                 for sub_key in range(n_qubits)
             )
         )
