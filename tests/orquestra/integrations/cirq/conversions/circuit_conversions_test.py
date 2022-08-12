@@ -259,9 +259,11 @@ class TestExportingToCirq:
     ):
         bound = orquestra_circuit.bind(EXAMPLE_PARAM_VALUES)
         bound_converted = export_to_cirq(bound)
+        # breakpoint()
         ref_bound = cirq.resolve_parameters(
-            cirq_circuit, {**EXAMPLE_PARAM_VALUES, sympy.pi: 3.14}
+            cirq_circuit, {**EXAMPLE_PARAM_VALUES}  # , sympy.pi: 3.14}
         )
+
         assert cirq.approx_eq(
             bound_converted, ref_bound
         ), f"Converted circuit:\n{bound_converted}\n isn't equal to\n{ref_bound}"
