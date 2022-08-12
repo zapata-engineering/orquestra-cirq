@@ -8,7 +8,7 @@ from typing import List, Sequence, cast
 import cirq
 import numpy as np
 from orquestra.quantum.api.backend import QuantumSimulator, StateVector
-from orquestra.quantum.circuits import Circuit
+from orquestra.quantum.circuits import Circuit, I
 from orquestra.quantum.measurements import (
     ExpectationValues,
     Measurements,
@@ -30,6 +30,10 @@ def _prepare_measurable_cirq_circuit(circuit, noise_model):
     Returns:
         circuit to run on a cirq or qsim simulator
     """
+
+    for i in range(circuit.n_qubits):
+        circuit += I(i)
+
     cirq_circuit = export_to_cirq(circuit)
 
     if noise_model is not None:
@@ -237,11 +241,10 @@ def get_measurement_from_cirq_result_object(
     Return:
         Measurements.
     """
-
     numpy_samples = list(
         zip(
             *(
-                result_object.measurements.get(str(int(sub_key)), [[0]] * n_samples)
+                result_object.measurements.get(f"q({sub_key})", [[0]] * n_samples)
                 for sub_key in range(n_qubits)
             )
         )
