@@ -43,6 +43,7 @@ class TestCirqSimulator(QuantumSimulatorTests):
         # Given
         circuit = Circuit([X(0), CNOT(1, 2)], n_qubits=4)
         simulator = CirqSimulator()
+
         measurements = simulator.run_circuit_and_measure(circuit, n_samples=100)
         assert len(measurements.bitstrings) == 100
 
