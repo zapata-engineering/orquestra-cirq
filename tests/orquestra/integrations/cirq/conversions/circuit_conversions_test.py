@@ -259,7 +259,6 @@ class TestExportingToCirq:
     ):
         bound = orquestra_circuit.bind(EXAMPLE_PARAM_VALUES)
         bound_converted = export_to_cirq(bound)
-        # breakpoint()
         ref_bound = cirq.resolve_parameters(
             cirq_circuit, {**EXAMPLE_PARAM_VALUES}  # , sympy.pi: 3.14}
         )
