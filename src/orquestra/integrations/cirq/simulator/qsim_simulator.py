@@ -20,6 +20,7 @@ class QSimSimulator(CirqBasedSimulator):
     In order to run on GPU using cuStateVec (https://docs.nvidia.com/cuda/cuquantum/custatevec/index.html)
     please provide `use_gpu=True` and `gpu_mode=1` in `qsim_options`.
 
+
     Args:
         noise_model: an optional noise model to pass in for noisy simulations
         param_resolver: Optional arg that defines the
