@@ -1,3 +1,6 @@
+################################################################################
+# © Copyright 2021-2022 Zapata Computing Inc.
+################################################################################
 from openfermion import QubitOperator, SymbolicOperator  # type: ignore
 from orquestra.quantum.operators import PauliRepresentation, PauliSum, PauliTerm
 

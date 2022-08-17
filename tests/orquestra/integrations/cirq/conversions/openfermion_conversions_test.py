@@ -1,3 +1,6 @@
+################################################################################
+# © Copyright 2021-2022 Zapata Computing Inc.
+################################################################################
 import pytest
 from openfermion import IsingOperator, QubitOperator  # type: ignore
 from openfermion.testing import random_qubit_operator  # type: ignore
