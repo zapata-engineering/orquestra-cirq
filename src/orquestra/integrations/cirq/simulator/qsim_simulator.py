@@ -17,8 +17,10 @@ from ._base import CirqBasedSimulator
 class QSimSimulator(CirqBasedSimulator):
 
     """Integration with qsim simulator.
-    In order to run on GPU using cuStateVec (https://docs.nvidia.com/cuda/cuquantum/custatevec/index.html)
+    In order to run on GPU using cuStateVec
+    (https://docs.nvidia.com/cuda/cuquantum/custatevec/index.html)
     please provide `use_gpu=True` and `gpu_mode=1` in `qsim_options`.
+    Visit https://quantumai.google/qsim to learn more about qsimcirq
 
 
     Args:
