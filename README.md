@@ -38,7 +38,7 @@ qsim_options = QSimOptions(use_gpu=True, gpu_mode=1)
 sim = QSimSimulator(qsim_options=qsim_options)
 ```
 
-`CuStateVecSimulator` by default is set to `use_gpu=true` and `gpu_mode=1`. Below is an example of importing `CuStateVecSimulator`:
+`CuStateVecSimulator` is using `QsimSimulator` and by default is set to `use_gpu=true` and `gpu_mode=1`. Below is an example of importing `CuStateVecSimulator`:
 
 ```
 from orquestra.integrations.custatevec.simulator import CuStateVecSimulator
