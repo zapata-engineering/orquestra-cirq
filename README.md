@@ -8,7 +8,7 @@
 
 Even though it's intended to be used with Orquestra, `orquestra-cirq` can be also used as a Python module.
 To install it, make to install `orquestra-quantum` first. Then you just need to run `pip install .` from the main directory.
-If you want to import `QSimSimulator`, you are requried to run `pip install -e .[qsim]`. 
+If you want to import `QSimSimulator`, you are requried to run `pip install -e .[qsim]`.
 ## Overview
 
 `orquestra-cirq` is a Python module that exposes Cirq's and qsim's simulators as an [`orquestra`](https://github.com/zapatacomputing/orquestra-quantum/blob/main/src/orquestra/quantum/api/backend.py) `QuantumSimulator`. They can be imported with:
@@ -38,7 +38,13 @@ qsim_options = QSimOptions(use_gpu=True, gpu_mode=1)
 sim = QSimSimulator(qsim_options=qsim_options)
 ```
 
+`CuStateVecSimulator` by default is set to `use_gpu=true` and `gpu_mode=1`. Below is an example of importing `CuStateVecSimulator`:
 
+```
+from orquestra.integrations.custatevec.simulator import CuStateVecSimulator
+
+sim = CuStateVecSimulator()
+```
 ## Development and contribution
 
 You can find the development guidelines in the [`orquestra-quantum` repository](https://github.com/zapatacomputing/orquestra-quantum).

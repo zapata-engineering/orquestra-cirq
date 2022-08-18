@@ -1,1 +1,1 @@
-from .custatevec import CustatevecSimulator
+from .custatevec import CuStateVecSimulator

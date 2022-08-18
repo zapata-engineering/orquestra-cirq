@@ -16,7 +16,7 @@ except ModuleNotFoundError:
     warnings.warn("qsimcirq is not imported")
 
 
-class CustatevecSimulator(QSimSimulator):
+class CuStateVecSimulator(QSimSimulator):
 
     """CustatevecSimulator is qsimcirq simulator that
        uses Nvidia GPUs for all simulation. CUDA toolkit and some dependency tools
