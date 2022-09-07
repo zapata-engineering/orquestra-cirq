@@ -1,9 +1,13 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
+import sys
+
 import numpy as np
 import pytest
 from cirq import depolarize
+
+# from cirq import depolarize
 from orquestra.quantum.api.backend_test import (
     QuantumSimulatorGatesTest,
     QuantumSimulatorTests,
@@ -11,28 +15,34 @@ from orquestra.quantum.api.backend_test import (
 from orquestra.quantum.circuits import CNOT, Circuit, H, X
 from orquestra.quantum.operators import PauliSum
 
-from orquestra.integrations.cirq.simulator import CirqSimulator
+from orquestra.integrations.cirq.simulator import QSimSimulator
 
 
 @pytest.fixture()
 def backend():
-    return CirqSimulator()
+    return QSimSimulator()
 
 
 @pytest.fixture()
 def wf_simulator():
-    return CirqSimulator()
+    return QSimSimulator()
 
 
-class TestCirqSimulator(QuantumSimulatorTests):
-    def test_setup_basic_simulators(self, wf_simulator):
-        assert isinstance(wf_simulator, CirqSimulator)
-        assert wf_simulator.noise_model is None
+@pytest.mark.skipif(
+    sys.version_info > (3, 9),
+    reason="QsimSimulator does not work on Python 3.10 or above",
+)
+class TestQsimSimulator(QuantumSimulatorTests):
+    def test_setup_basic_simulators(self):
+        simulator = QSimSimulator()
+        assert isinstance(simulator, QSimSimulator)
+        assert simulator.noise_model is None
 
     def test_run_circuit_and_measure(self):
         # Given
         circuit = Circuit([X(0), CNOT(1, 2)])
-        simulator = CirqSimulator()
+        simulator = QSimSimulator()
+
         measurements = simulator.run_circuit_and_measure(circuit, n_samples=100)
         assert len(measurements.bitstrings) == 100
 
@@ -42,8 +52,7 @@ class TestCirqSimulator(QuantumSimulatorTests):
     def test_measuring_inactive_qubits(self):
         # Given
         circuit = Circuit([X(0), CNOT(1, 2)], n_qubits=4)
-        simulator = CirqSimulator()
-
+        simulator = QSimSimulator()
         measurements = simulator.run_circuit_and_measure(circuit, n_samples=100)
         assert len(measurements.bitstrings) == 100
 
@@ -52,7 +61,7 @@ class TestCirqSimulator(QuantumSimulatorTests):
 
     def test_run_circuitset_and_measure(self):
         # Given
-        simulator = CirqSimulator()
+        simulator = QSimSimulator()
         circuit = Circuit([X(0), CNOT(1, 2)])
         n_circuits = 5
         n_samples = 100
@@ -69,7 +78,7 @@ class TestCirqSimulator(QuantumSimulatorTests):
 
     def test_get_wavefunction(self):
         # Given
-        simulator = CirqSimulator()
+        simulator = QSimSimulator()
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
 
         # When
@@ -86,7 +95,7 @@ class TestCirqSimulator(QuantumSimulatorTests):
 
     def test_get_exact_expectation_values(self):
         # Given
-        simulator = CirqSimulator()
+        simulator = QSimSimulator()
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
         qubit_operator = PauliSum("2*I0 + -1*Z0*Z1 + X0*X2")
         target_values = np.array([2.0, -1.0, 0.0])
@@ -103,7 +112,7 @@ class TestCirqSimulator(QuantumSimulatorTests):
         # Given
         noise = 0.0002
         noise_model = depolarize(p=noise)
-        simulator = CirqSimulator(noise_model=noise_model)
+        simulator = QSimSimulator(noise_model=noise_model)
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
         qubit_operator = PauliSum("-1*Z0*Z1 + X0*X2")
         target_values = np.array([-0.9986673775881747, 0.0])
@@ -112,15 +121,17 @@ class TestCirqSimulator(QuantumSimulatorTests):
             circuit, qubit_operator
         )
         np.testing.assert_almost_equal(
-            expectation_values.values[0], target_values[0], 2
+            expectation_values.values[0], target_values[0], decimal=2
         )
-        np.testing.assert_almost_equal(expectation_values.values[1], target_values[1])
+        np.testing.assert_almost_equal(
+            expectation_values.values[1], target_values[1], decimal=2
+        )
 
     def test_run_circuit_and_measure_seed(self):
         # Given
         circuit = Circuit([X(0), CNOT(1, 2)])
-        simulator1 = CirqSimulator(seed=12)
-        simulator2 = CirqSimulator(seed=12)
+        simulator1 = QSimSimulator(seed=12)
+        simulator2 = QSimSimulator(seed=12)
 
         # When
         measurements1 = simulator1.run_circuit_and_measure(circuit, n_samples=1000)
@@ -133,8 +144,8 @@ class TestCirqSimulator(QuantumSimulatorTests):
     def test_get_wavefunction_seed(self):
         # Given
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
-        simulator1 = CirqSimulator(seed=542)
-        simulator2 = CirqSimulator(seed=542)
+        simulator1 = QSimSimulator(seed=542)
+        simulator2 = QSimSimulator(seed=542)
 
         # When
         wavefunction1 = simulator1.get_wavefunction(circuit)
@@ -145,6 +156,11 @@ class TestCirqSimulator(QuantumSimulatorTests):
             assert ampl1 == ampl2
 
 
-class TestCirqSimulatorGates(QuantumSimulatorGatesTest):
-    atol_wavefunction = 1e-8
+@pytest.mark.skipif(
+    sys.version_info > (3, 9),
+    reason="QsimSimulator does not work on Python 3.10 or above",
+)
+class TestQSimSimulatorGates(QuantumSimulatorGatesTest):
+    atol_wavefunction = 5e-7
+
     pass

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish-release:
+  run-action:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,12 +19,6 @@ jobs:
           # Fetch whole repo to get access to tags to read current package
           # version.
           fetch-depth: 0
-
-      - name: Get orquestra-quantum
-        uses: actions/checkout@v2
-        with:
-          repository: zapatacomputing/orquestra-quantum
-          path: orquestra-quantum
 
       - name: Run publish release action
         uses: ./subtrees/z_quantum_actions/actions/publish-release

@@ -1,85 +1,73 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
-import unittest
+import pytest
+from openfermion import IsingOperator, QubitOperator  # type: ignore
+from openfermion.testing import random_qubit_operator  # type: ignore
+from orquestra.quantum.operators import PauliSum, PauliTerm
 
-from cirq import GridQubit, LineQubit, PauliString, PauliSum, X, Y, Z
-from orquestra.quantum.openfermion import QubitOperator
-
-from orquestra.integrations.cirq.conversions import qubitop_to_paulisum
+from orquestra.integrations.cirq.conversions import from_openfermion, to_openfermion
 
 
-class TestQubitOperator(unittest.TestCase):
-    def test_qubitop_to_paulisum_identity_operator(self):
-        # Given
-        qubit_operator = QubitOperator("", 4)
+class TestOpenFermionConversions:
+    @pytest.mark.parametrize(
+        "pauli_op",
+        [PauliTerm.identity() * (4 + 0.5j), PauliSum.identity() * (4 + 0.5j)],
+    )
+    def test_identity_operator(self, pauli_op):
+        openfermion_op = to_openfermion(pauli_op, QubitOperator)
+        openfermion_ising_op = to_openfermion(pauli_op, IsingOperator)
+        assert openfermion_op == QubitOperator("", 4 + 0.5j)
+        assert openfermion_ising_op == IsingOperator("", 4 + 0.5j)
 
-        # When
-        paulisum = qubitop_to_paulisum(qubit_operator)
+        back_to_pauli_op = from_openfermion(openfermion_op)
+        back_to_pauli_op_from_ising = from_openfermion(openfermion_ising_op)
+        assert back_to_pauli_op == pauli_op
+        assert back_to_pauli_op_from_ising == pauli_op
 
-        # Then
-        self.assertEqual(paulisum.qubits, ())
-        self.assertEqual(paulisum, PauliSum() + 4)
+    @pytest.mark.parametrize("pauli_op", [PauliTerm.identity() * 0, PauliSum()])
+    def test_zero_operator(self, pauli_op):
+        of_op = to_openfermion(pauli_op, QubitOperator)
+        of_op_ising = to_openfermion(pauli_op, IsingOperator)
+        assert of_op == QubitOperator()
+        assert of_op_ising == IsingOperator()
 
-    def test_qubitop_to_paulisum_z0z1_operator(self):
-        # Given
-        qubit_operator = QubitOperator("Z0 Z1", -1.5)
-        expected_qubits = (GridQubit(0, 0), GridQubit(1, 0))
-        expected_paulisum = (
-            PauliSum()
-            + PauliString(Z.on(expected_qubits[0]))
-            * PauliString(Z.on(expected_qubits[1]))
-            * -1.5
-        )
+        back_to_pauli_op = from_openfermion(of_op)
+        back_to_pauli_op_from_ising = from_openfermion(of_op_ising)
+        assert back_to_pauli_op == pauli_op
+        assert back_to_pauli_op_from_ising == pauli_op
 
-        # When
-        paulisum = qubitop_to_paulisum(qubit_operator)
+    @pytest.mark.parametrize(
+        "pauli_op", [PauliTerm("X0*Y2*Z3", 9 + 0.5j), PauliSum("(9+0.5j)*X0*Y2*Z3")]
+    )
+    def test_single_term(self, pauli_op):
+        openfermion_op = to_openfermion(pauli_op)
+        assert openfermion_op == QubitOperator("X0 Y2 Z3", 9 + 0.5j)
+        back_to_pauli_op = from_openfermion(openfermion_op)
+        assert back_to_pauli_op == pauli_op
 
-        # Then
-        self.assertEqual(paulisum.qubits, expected_qubits)
-        self.assertEqual(paulisum, expected_paulisum)
+    @pytest.mark.parametrize(
+        "pauli_op", [PauliTerm("Z0*Z2*Z3", 2j), PauliSum("(2j)*Z0*Z2*Z3")]
+    )
+    def test_ising_single_term(self, pauli_op):
+        ising_op = to_openfermion(pauli_op, IsingOperator)
+        assert ising_op == IsingOperator("Z0 Z2 Z3", 2j)
+        assert from_openfermion(ising_op) == pauli_op
 
-    def test_qubitop_to_paulisum_setting_qubits(self):
-        # Given
-        qubit_operator = QubitOperator("Z0 Z1", -1.5)
-        expected_qubits = (LineQubit(0), LineQubit(5))
-        expected_paulisum = (
-            PauliSum()
-            + PauliString(Z.on(expected_qubits[0]))
-            * PauliString(Z.on(expected_qubits[1]))
-            * -1.5
-        )
+    def test_multi_term(self):
+        pauli_op = PauliSum("2*Z0*X5*Y7 + 8*Z5")
+        openfermion_op = QubitOperator("2 [Z0 X5 Y7] + 8 [Z5]")
+        assert to_openfermion(pauli_op) == openfermion_op
+        assert from_openfermion(openfermion_op) == pauli_op
 
-        # When
-        paulisum = qubitop_to_paulisum(qubit_operator, qubits=expected_qubits)
+    def test_ising_multi_term(self):
+        ising_op = PauliSum("2*Z0*Z5*Z7 + 8*Z5")
+        openfermion_ising_op = IsingOperator("2 [Z0 Z5 Z7] + 8 [Z5]")
+        assert to_openfermion(ising_op, IsingOperator) == openfermion_ising_op
+        assert from_openfermion(openfermion_ising_op) == ising_op
 
-        # Then
-        self.assertEqual(paulisum.qubits, expected_qubits)
-        self.assertEqual(paulisum, expected_paulisum)
-
-    def test_qubitop_to_paulisum_more_terms(self):
-        # Given
-        qubit_operator = (
-            QubitOperator("Z0 Z1 Z2", -1.5)
-            + QubitOperator("X0", 2.5)
-            + QubitOperator("Y1", 3.5)
-        )
-        expected_qubits = (LineQubit(0), LineQubit(5), LineQubit(8))
-        expected_paulisum = (
-            PauliSum()
-            + (
-                PauliString(Z.on(expected_qubits[0]))
-                * PauliString(Z.on(expected_qubits[1]))
-                * PauliString(Z.on(expected_qubits[2]))
-                * -1.5
-            )
-            + (PauliString(X.on(expected_qubits[0]) * 2.5))
-            + (PauliString(Y.on(expected_qubits[1]) * 3.5))
-        )
-
-        # When
-        paulisum = qubitop_to_paulisum(qubit_operator, qubits=expected_qubits)
-
-        # Then
-        self.assertEqual(paulisum.qubits, expected_qubits)
-        self.assertEqual(paulisum, expected_paulisum)
+    def test_random_qubit_op(self):
+        of_qubit_op = random_qubit_operator()
+        pauli_op = from_openfermion(of_qubit_op)
+        back_to_of_qubit_op = to_openfermion(pauli_op)
+        assert of_qubit_op == back_to_of_qubit_op
