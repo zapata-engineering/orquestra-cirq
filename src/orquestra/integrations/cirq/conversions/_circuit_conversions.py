@@ -125,6 +125,11 @@ EIGENGATE_SPECIAL_CASES = {
     (type(cirq.CZ), cirq.CZ.global_shift, cirq.CZ.exponent): _builtin_gates.CZ,
     (type(cirq.SWAP), cirq.SWAP.global_shift, cirq.SWAP.exponent): _builtin_gates.SWAP,
     (
+        type(cirq.T**-1),
+        (cirq.T**-1).global_shift,
+        -cirq.T.exponent,
+    ): _builtin_gates.T.dagger,
+    (
         type(cirq.ISWAP),
         cirq.ISWAP.global_shift,
         cirq.ISWAP.exponent,
@@ -360,8 +365,7 @@ def _gen_custom_gate_name(gate_cls, matrix: np.ndarray):
 def _convert_gate_operation_to_orquestra(operation) -> _gates.GateOperation:
     if not all(isinstance(qubit, cirq.LineQubit) for qubit in operation.qubits):
         raise NotImplementedError(
-            f"Failed to import {operation} because it acts on unsupported qubit types."
-            " Only LineQubits are supported."
+            f"Failed to import {operation}. Only LineQubits are supported."
         )
 
     imported_gate = _import_from_cirq(operation.gate)
