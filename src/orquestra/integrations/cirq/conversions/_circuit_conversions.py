@@ -360,7 +360,8 @@ def _gen_custom_gate_name(gate_cls, matrix: np.ndarray):
 def _convert_gate_operation_to_orquestra(operation) -> _gates.GateOperation:
     if not all(isinstance(qubit, cirq.LineQubit) for qubit in operation.qubits):
         raise NotImplementedError(
-            f"Failed to import {operation}. Grid qubits are not yet supported."
+            f"Failed to import {operation} because it acts on unsupported qubit types."
+            " Only LineQubits are supported."
         )
 
     imported_gate = _import_from_cirq(operation.gate)
