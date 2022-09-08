@@ -125,6 +125,16 @@ EIGENGATE_SPECIAL_CASES = {
     (type(cirq.CZ), cirq.CZ.global_shift, cirq.CZ.exponent): _builtin_gates.CZ,
     (type(cirq.SWAP), cirq.SWAP.global_shift, cirq.SWAP.exponent): _builtin_gates.SWAP,
     (
+        type(cirq.S**-1),
+        (cirq.S**-1).global_shift,
+        (cirq.S**-1).exponent,
+    ): _builtin_gates.S.dagger,
+    (
+        type(cirq.T**-1),
+        (cirq.T**-1).global_shift,
+        (cirq.T**-1).exponent,
+    ): _builtin_gates.T.dagger,
+    (
         type(cirq.ISWAP),
         cirq.ISWAP.global_shift,
         cirq.ISWAP.exponent,

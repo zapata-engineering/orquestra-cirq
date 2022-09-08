@@ -28,7 +28,9 @@ EQUIVALENT_NON_PARAMETRIC_GATES = [
     (_builtin_gates.Z, cirq.Z),
     (_builtin_gates.H, cirq.H),
     (_builtin_gates.S, cirq.S),
+    (_builtin_gates.S.dagger, cirq.S**-1),
     (_builtin_gates.T, cirq.T),
+    (_builtin_gates.T.dagger, cirq.T**-1),
     (_builtin_gates.CNOT, cirq.CNOT),
     (_builtin_gates.CZ, cirq.CZ),
     (_builtin_gates.SWAP, cirq.SWAP),
@@ -42,7 +44,6 @@ EQUIVALENT_PARAMETRIC_GATES = [
         (_builtin_gates.RY, cirq.ry),
         (_builtin_gates.RZ, cirq.rz),
         (_builtin_gates.RH, make_rotation_factory(cirq.HPowGate, 0.0)),
-        (_builtin_gates.PHASE, make_rotation_factory(cirq.ZPowGate)),
         (_builtin_gates.CPHASE, cirq.cphase),
         (_builtin_gates.XX, make_rotation_factory(cirq.XXPowGate, -0.5)),
         (_builtin_gates.YY, make_rotation_factory(cirq.YYPowGate, -0.5)),
@@ -50,6 +51,15 @@ EQUIVALENT_PARAMETRIC_GATES = [
         (_builtin_gates.XY, make_rotation_factory(cirq.ISwapPowGate, 0.0)),
     ]
     for theta in [0, -1, np.pi / 5, 2 * np.pi, -np.pi, -np.pi / 2, -np.pi / 4]
+]
+
+EQUIVALENT_PARAMETRIC_GATES_WITH_SPECIAL_CASES = [
+    # phase rotations of -np.pi / 2 should correspond to T^dagger gates
+    (_builtin_gates.PHASE(theta), make_rotation_factory(cirq.ZPowGate)(theta))
+    for theta in [0, -1, np.pi / 5, 2 * np.pi, -np.pi]
+] + [
+    (_builtin_gates.S.dagger, make_rotation_factory(cirq.ZPowGate)(-np.pi / 2)),
+    (_builtin_gates.T.dagger, make_rotation_factory(cirq.ZPowGate)(-np.pi / 4)),
 ]
 
 EQUIVALENT_U3_GATES = [
@@ -90,6 +100,7 @@ def _is_scaled_identity(matrix: np.ndarray):
     [
         *EQUIVALENT_IDENTITY_GATES,
         *EQUIVALENT_NON_PARAMETRIC_GATES,
+        *EQUIVALENT_PARAMETRIC_GATES_WITH_SPECIAL_CASES,
         *EQUIVALENT_PARAMETRIC_GATES,
         *EQUIVALENT_U3_GATES,
     ],
