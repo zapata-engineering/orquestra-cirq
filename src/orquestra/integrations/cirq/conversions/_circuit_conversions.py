@@ -127,7 +127,7 @@ EIGENGATE_SPECIAL_CASES = {
     (
         type(cirq.T**-1),
         (cirq.T**-1).global_shift,
-        -cirq.T.exponent,
+        (cirq.T**-1).exponent,
     ): _builtin_gates.T.dagger,
     (
         type(cirq.ISWAP),
