@@ -241,19 +241,19 @@ def get_measurement_from_cirq_result_object(
     Return:
         Measurements.
     """
-    numpy_samples = list(
-        zip(
-            *(
-                result_object.measurements.get(f"q({sub_key})", [[0]] * n_samples)
-                for sub_key in range(n_qubits)
-            )
-        )
-    )
+    keys = _find_reverse_permutation(result_object.data.columns, n_qubits)
 
-    samples = [
-        tuple(int(key[0]) for key in numpy_bitstring)
-        for numpy_bitstring in numpy_samples
-    ]
+    samples = list(
+        tuple(measurement) for measurement in result_object.data.to_numpy()[:, keys]
+    )
 
     measurement = Measurements(samples)
     return measurement
+
+
+def _find_reverse_permutation(permutation, n_qubits):
+    keys_to_indices = {f"q({n})": n for n in range(n_qubits)}
+    result = [0 for _ in range(n_qubits)]
+    for i, key in enumerate(permutation):
+        result[keys_to_indices[key]] = i
+    return result
