@@ -30,18 +30,18 @@ class QSimSimulator(CirqBasedSimulator):
         qubit_order: Optional arg that defines the ordering of qubits.
         seed: seed for random number generator.
         circuit_memoization_size: Optional arg tht defines the number of
-        last translated circuits to be memoized from simulation executions,
-        to eliminate translation overhead.
+            last translated circuits to be memoized from simulation executions,
+            to eliminate translation overhead.
         qsim_options:  An options dict or QSimOptions object with options
-        to use for all circuits run using this simulator. See QSimOptions from
-        qsimcirq for more details.
+            to use for all circuits run using this simulator. See QSimOptions from
+            qsimcirq for more details.
 
     Attributes:
         simulator: Qsim simulator this class uses with the options defined.
         noise_model: an optional noise model to pass in for noisy simulations
         qubit_order: qubit_order: Optional arg that defines the ordering of qubits.
         param_resolver: param_resolver: Optional arg that defines the
-        parameters to run with the program.
+            parameters to run with the program.
         qubit_order: Optional arg that defines the ordering of qubits.
     """
 
