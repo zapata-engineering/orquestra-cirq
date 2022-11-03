@@ -9,7 +9,11 @@ import cirq
 import numpy as np
 from orquestra.quantum.api.wavefunction_simulator import BaseWavefunctionSimulator
 from orquestra.quantum.circuits import Circuit, I
-from orquestra.quantum.measurements import ExpectationValues, expectation_values_to_real
+from orquestra.quantum.measurements import (
+    ExpectationValues,
+    Measurements,
+    expectation_values_to_real,
+)
 from orquestra.quantum.operators import PauliRepresentation, get_sparse_operator
 from orquestra.quantum.typing import StateVector
 
@@ -42,6 +46,24 @@ class CirqBasedSimulator(BaseWavefunctionSimulator):
         self.simulator = simulator
         self.param_resolver = param_resolver
         self.qubit_order = qubit_order
+
+    def _run_and_measure(self, circuit: Circuit, n_samples: int) -> Measurements:
+
+        cirq_circuit = _prepare_measurable_cirq_circuit(circuit, self.noise_model)
+
+        cirq_circuit.append(cirq.measure_each(*cirq_circuit.all_qubits()))
+
+        result_object = self.simulator.run(
+            cirq_circuit,
+            param_resolver=self.param_resolver,
+            repetitions=n_samples,
+        )
+
+        measurement = get_measurement_from_cirq_result_object(
+            result_object, circuit.n_qubits, n_samples
+        )
+
+        return measurement
 
     def get_exact_noisy_expectation_values(
         self, circuit: Circuit, qubit_operator: PauliRepresentation
@@ -88,11 +110,8 @@ class CirqBasedSimulator(BaseWavefunctionSimulator):
     def _get_wavefunction_from_native_circuit(
         self, circuit: Circuit, initial_state: StateVector
     ) -> StateVector:
-        # Cirq does not allow inactive qubits so we added identity to our circuits.
-        for i in range(circuit.n_qubits):
-            circuit += I(i)
 
-        cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
+        cirq_circuit = _prepare_measurable_cirq_circuit(circuit, self.noise_model)
 
         initial_state = np.array(initial_state, np.complex64)
 
@@ -107,3 +126,55 @@ class CirqBasedSimulator(BaseWavefunctionSimulator):
 
     def _extract_density_matrix(self, result):
         return result.density_matrix_of()
+
+
+def _prepare_measurable_cirq_circuit(circuit, noise_model):
+    """
+    Export circuit to Cirq and add terminal measurements.
+
+    Args:
+        circuit (orquestra.quantum.circuit.Circuit): the circuit to prepare the state.
+        noise_model: model to create a noisy circuit
+
+    Returns:
+        circuit to run on a cirq or qsim simulator
+    """
+
+    for i in range(circuit.n_qubits):
+        circuit += I(i)
+
+    cirq_circuit = cast(cirq.Circuit, export_to_cirq(circuit))
+
+    if noise_model is not None:
+        cirq_circuit = cirq_circuit.with_noise(noise_model)
+
+    return cirq_circuit
+
+
+def get_measurement_from_cirq_result_object(
+    result_object: cirq.Result, n_qubits: int, n_samples: int
+) -> Measurements:
+    """Extract measurement bitstrings from cirq result object.
+    Args:
+        result_object: object returned by Cirq simulator's run or run_batch.
+        n_qubits: number of qubits in full circuit (before exporting to cirq).
+        n_samples: number of measured samples
+    Return:
+        Measurements.
+    """
+    keys = _find_reverse_permutation(result_object.data.columns, n_qubits)
+
+    samples = list(
+        tuple(measurement) for measurement in result_object.data.to_numpy()[:, keys]
+    )
+
+    measurement = Measurements(samples)
+    return measurement
+
+
+def _find_reverse_permutation(permutation, n_qubits):
+    keys_to_indices = {f"q({n})": n for n in range(n_qubits)}
+    result = [0 for _ in range(n_qubits)]
+    for i, key in enumerate(permutation):
+        result[keys_to_indices[key]] = i
+    return result
