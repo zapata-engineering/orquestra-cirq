@@ -65,6 +65,8 @@ class CirqBasedSimulator(QuantumSimulator):
             param_resolver: Optional arg that defines the parameters
             to run with the program.
             qubit_order: Optional arg that defines the ordering of qubits.
+            normalize: whether to normalize the state vector after
+                simulation of the quantum circuit, by default False.
         """
         super().__init__()
         self.noise_model = noise_model
