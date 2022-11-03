@@ -35,6 +35,12 @@ class QSimSimulator(CirqBasedSimulator):
         qsim_options:  An options dict or QSimOptions object with options
             to use for all circuits run using this simulator. See QSimOptions from
             qsimcirq for more details.
+        normalize_wavefunction: Whether to normalize the state vector after
+            simulation of the quantum circuit, by default False. This flag is
+            exposed because sometimes, the resulting state vector from a qsim
+            circuit simulation is not normalized up to machine precision, which
+            can cause issues with some applications such as sampling using a
+            probability vector.
 
     Attributes:
         simulator: Qsim simulator this class uses with the options defined.
@@ -56,7 +62,7 @@ class QSimSimulator(CirqBasedSimulator):
         seed: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
         circuit_memoization_size: int = 0,
         qsim_options: Optional["qsimcirq.QSimOptions"] = None,
-        normalize: bool = False,
+        normalize_wavefunction: bool = False,
     ):
 
         simulator = qsimcirq.QSimSimulator(
@@ -65,4 +71,6 @@ class QSimSimulator(CirqBasedSimulator):
             circuit_memoization_size=circuit_memoization_size,
         )
 
-        super().__init__(simulator, noise_model, param_resolver, qubit_order, normalize)
+        super().__init__(
+            simulator, noise_model, param_resolver, qubit_order, normalize_wavefunction
+        )

@@ -55,7 +55,7 @@ class CirqBasedSimulator(QuantumSimulator):
         noise_model: cirq.NOISE_MODEL_LIKE = None,
         param_resolver: cirq.ParamResolverOrSimilarType = None,
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
-        normalize: bool = False,
+        normalize_wavefunction: bool = False,
     ):
         """initializes the parameters for the system or simulator
 
@@ -65,7 +65,7 @@ class CirqBasedSimulator(QuantumSimulator):
             param_resolver: Optional arg that defines the parameters
             to run with the program.
             qubit_order: Optional arg that defines the ordering of qubits.
-            normalize: whether to normalize the state vector after
+            normalize_wavefunction: whether to normalize the state vector after
                 simulation of the quantum circuit, by default False.
         """
         super().__init__()
@@ -73,7 +73,7 @@ class CirqBasedSimulator(QuantumSimulator):
         self.simulator = simulator
         self.param_resolver = param_resolver
         self.qubit_order = qubit_order
-        self.normalize = normalize
+        self.normalize_wavefunction = normalize_wavefunction
 
     def run_circuit_and_measure(self, circuit: Circuit, n_samples: int) -> Measurements:
         """Run a circuit and measure a certain number of bitstrings.
@@ -227,7 +227,7 @@ class CirqBasedSimulator(QuantumSimulator):
             initial_state=initial_state,
         )
         final_state_vector = np.asarray(simulated_result.final_state_vector)
-        if self.normalize:
+        if self.normalize_wavefunction:
             final_state_vector /= np.linalg.norm(final_state_vector)
         return final_state_vector
 
