@@ -55,6 +55,7 @@ class CirqBasedSimulator(QuantumSimulator):
         noise_model: cirq.NOISE_MODEL_LIKE = None,
         param_resolver: cirq.ParamResolverOrSimilarType = None,
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
+        normalize: bool = False,
     ):
         """initializes the parameters for the system or simulator
 
@@ -70,6 +71,7 @@ class CirqBasedSimulator(QuantumSimulator):
         self.simulator = simulator
         self.param_resolver = param_resolver
         self.qubit_order = qubit_order
+        self.normalize = normalize
 
     def run_circuit_and_measure(self, circuit: Circuit, n_samples: int) -> Measurements:
         """Run a circuit and measure a certain number of bitstrings.
@@ -222,8 +224,10 @@ class CirqBasedSimulator(QuantumSimulator):
             qubit_order=self.qubit_order,
             initial_state=initial_state,
         )
-
-        return simulated_result.final_state_vector
+        final_state_vector = np.asarray(simulated_result.final_state_vector)
+        if self.normalize:
+            final_state_vector /= np.linalg.norm(final_state_vector)
+        return final_state_vector
 
     def _extract_density_matrix(self, result):
         return result.density_matrix_of()

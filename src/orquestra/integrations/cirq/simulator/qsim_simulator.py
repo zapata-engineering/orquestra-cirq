@@ -56,6 +56,7 @@ class QSimSimulator(CirqBasedSimulator):
         seed: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
         circuit_memoization_size: int = 0,
         qsim_options: Optional["qsimcirq.QSimOptions"] = None,
+        normalize: bool = False,
     ):
 
         simulator = qsimcirq.QSimSimulator(
@@ -64,4 +65,4 @@ class QSimSimulator(CirqBasedSimulator):
             circuit_memoization_size=circuit_memoization_size,
         )
 
-        super().__init__(simulator, noise_model, param_resolver, qubit_order)
+        super().__init__(simulator, noise_model, param_resolver, qubit_order, normalize)
