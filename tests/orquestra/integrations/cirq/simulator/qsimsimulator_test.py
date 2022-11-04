@@ -93,6 +93,19 @@ class TestQsimSimulator(QuantumSimulatorTests):
             wavefunction.amplitudes[7], (1 / np.sqrt(2) + 0j), atol=10e-15
         )
 
+    def test_normalization(self):
+        # Given
+        simulator1 = QSimSimulator()
+        simulator2 = QSimSimulator(normalize_wavefunction=True)
+        circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
+        # When
+        wavefunction = simulator1.get_wavefunction(circuit)
+        normalized_wavefunction = simulator2.get_wavefunction(circuit)
+        # Then
+        assert abs(
+            np.sum(np.abs(normalized_wavefunction.amplitudes) ** 2) - 1.0
+        ) <= abs(np.sum(np.abs(wavefunction.amplitudes) ** 2) - 1.0)
+
     def test_get_exact_expectation_values(self):
         # Given
         simulator = QSimSimulator()
