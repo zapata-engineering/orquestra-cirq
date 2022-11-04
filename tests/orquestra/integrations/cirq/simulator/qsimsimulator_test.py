@@ -101,10 +101,15 @@ class TestQsimSimulator(QuantumSimulatorTests):
         # When
         wavefunction = simulator1.get_wavefunction(circuit)
         normalized_wavefunction = simulator2.get_wavefunction(circuit)
-        # Then
-        assert abs(
+        precision_error_without_normalization = abs(
+            np.sum(np.abs(wavefunction.amplitudes) ** 2) - 1.0
+        )
+        precision_error_with_normalization = abs(
             np.sum(np.abs(normalized_wavefunction.amplitudes) ** 2) - 1.0
-        ) <= abs(np.sum(np.abs(wavefunction.amplitudes) ** 2) - 1.0)
+        )
+        # Then
+        assert np.isclose(precision_error_without_normalization, 0.0)
+        assert np.isclose(precision_error_with_normalization, 0.0, atol=1e-16)
 
     def test_get_exact_expectation_values(self):
         # Given
