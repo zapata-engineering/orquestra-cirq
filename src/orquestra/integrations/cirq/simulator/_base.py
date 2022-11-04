@@ -228,6 +228,7 @@ class CirqBasedSimulator(QuantumSimulator):
         )
         final_state_vector = np.asarray(simulated_result.final_state_vector)
         if self.normalize_wavefunction:
+            final_state_vector = final_state_vector.astype(np.complex256)
             final_state_vector /= np.linalg.norm(final_state_vector)
         return final_state_vector
 
