@@ -113,7 +113,7 @@ class TestQsimSimulator(QuantumSimulatorTests):
             0.0,
             atol=TestQSimSimulatorGates.atol_wavefunction,
         )
-        assert np.isclose(precision_error_with_normalization, 0.0, atol=1e-16)
+        assert np.isclose(precision_error_with_normalization, 0.0, atol=1e-15)
 
     def test_get_exact_expectation_values(self):
         # Given
