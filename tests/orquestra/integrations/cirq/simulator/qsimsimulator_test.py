@@ -95,7 +95,7 @@ class TestQsimSimulator(QuantumSimulatorTests):
 
     def test_normalization(self):
         # Given
-        simulator1 = QSimSimulator()
+        simulator1 = QSimSimulator(normalize_wavefunction=False)
         simulator2 = QSimSimulator(normalize_wavefunction=True)
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
         # When
