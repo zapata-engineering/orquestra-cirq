@@ -26,7 +26,6 @@ def wf_simulator():
     sys.version_info > (3, 10),
     reason="QsimSimulator does not work on Python 3.10 or above",
 )
-# class TestQsimSimulator(QuantumSimulatorTests):
 class TestQsimSimulator:
     def test_setup_basic_simulators(self):
         simulator = QSimSimulator()
