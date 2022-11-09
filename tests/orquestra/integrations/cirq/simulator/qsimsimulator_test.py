@@ -6,6 +6,7 @@ import sys
 import numpy as np
 import pytest
 from cirq import depolarize
+from orquestra.quantum.api.circuit_runner_contracts import CIRCUIT_RUNNER_CONTRACTS
 from orquestra.quantum.circuits import CNOT, Circuit, H, X
 from orquestra.quantum.operators import PauliSum
 
@@ -13,7 +14,7 @@ from orquestra.integrations.cirq.simulator import QSimSimulator
 
 
 @pytest.fixture()
-def backend():
+def runner():
     return QSimSimulator()
 
 
@@ -133,3 +134,8 @@ class TestQsimSimulator:
         # Then
         for (ampl1, ampl2) in zip(wavefunction1.amplitudes, wavefunction2.amplitudes):
             assert ampl1 == ampl2
+
+
+@pytest.mark.parametrize("contract", CIRCUIT_RUNNER_CONTRACTS)
+def test_cirq_runner_fulfills_circuit_runner_contracts(runner, contract):
+    assert contract(runner)
