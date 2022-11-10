@@ -4,10 +4,7 @@
 import numpy as np
 import pytest
 from cirq import depolarize
-from orquestra.quantum.api.backend_test import (
-    QuantumSimulatorGatesTest,
-    QuantumSimulatorTests,
-)
+from orquestra.quantum.api.circuit_runner_contracts import CIRCUIT_RUNNER_CONTRACTS
 from orquestra.quantum.circuits import CNOT, Circuit, H, X
 from orquestra.quantum.operators import PauliSum
 
@@ -15,7 +12,7 @@ from orquestra.integrations.cirq.simulator import CirqSimulator
 
 
 @pytest.fixture()
-def backend():
+def runner():
     return CirqSimulator()
 
 
@@ -24,16 +21,16 @@ def wf_simulator():
     return CirqSimulator()
 
 
-class TestCirqSimulator(QuantumSimulatorTests):
+class TestiCirqSimulator:
     def test_setup_basic_simulators(self, wf_simulator):
         assert isinstance(wf_simulator, CirqSimulator)
         assert wf_simulator.noise_model is None
 
-    def test_run_circuit_and_measure(self):
+    def test_run_and_measure(self):
         # Given
         circuit = Circuit([X(0), CNOT(1, 2)])
         simulator = CirqSimulator()
-        measurements = simulator.run_circuit_and_measure(circuit, n_samples=100)
+        measurements = simulator.run_and_measure(circuit, n_samples=100)
         assert len(measurements.bitstrings) == 100
 
         for measurement in measurements.bitstrings:
@@ -44,20 +41,20 @@ class TestCirqSimulator(QuantumSimulatorTests):
         circuit = Circuit([X(0), CNOT(1, 2)], n_qubits=4)
         simulator = CirqSimulator()
 
-        measurements = simulator.run_circuit_and_measure(circuit, n_samples=100)
+        measurements = simulator.run_and_measure(circuit, n_samples=100)
         assert len(measurements.bitstrings) == 100
 
         for measurement in measurements.bitstrings:
             assert measurement == (1, 0, 0, 0)
 
-    def test_run_circuitset_and_measure(self):
+    def test_run_batch_and_measure(self):
         # Given
         simulator = CirqSimulator()
         circuit = Circuit([X(0), CNOT(1, 2)])
         n_circuits = 5
         n_samples = 100
         # When
-        measurements_set = simulator.run_circuitset_and_measure(
+        measurements_set = simulator.run_batch_and_measure(
             [circuit] * n_circuits, n_samples=[100] * n_circuits
         )
         # Then
@@ -84,21 +81,6 @@ class TestCirqSimulator(QuantumSimulatorTests):
             wavefunction.amplitudes[7], (1 / np.sqrt(2) + 0j), atol=10e-15
         )
 
-    def test_get_exact_expectation_values(self):
-        # Given
-        simulator = CirqSimulator()
-        circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
-        qubit_operator = PauliSum("2*I0 + -1*Z0*Z1 + X0*X2")
-        target_values = np.array([2.0, -1.0, 0.0])
-
-        # When
-
-        expectation_values = simulator.get_exact_expectation_values(
-            circuit, qubit_operator
-        )
-        # Then
-        np.testing.assert_array_almost_equal(expectation_values.values, target_values)
-
     def test_get_noisy_exact_expectation_values(self):
         # Given
         noise = 0.0002
@@ -116,15 +98,15 @@ class TestCirqSimulator(QuantumSimulatorTests):
         )
         np.testing.assert_almost_equal(expectation_values.values[1], target_values[1])
 
-    def test_run_circuit_and_measure_seed(self):
+    def test_run_and_measure_seed(self):
         # Given
         circuit = Circuit([X(0), CNOT(1, 2)])
         simulator1 = CirqSimulator(seed=12)
         simulator2 = CirqSimulator(seed=12)
 
         # When
-        measurements1 = simulator1.run_circuit_and_measure(circuit, n_samples=1000)
-        measurements2 = simulator2.run_circuit_and_measure(circuit, n_samples=1000)
+        measurements1 = simulator1.run_and_measure(circuit, n_samples=1000)
+        measurements2 = simulator2.run_and_measure(circuit, n_samples=1000)
 
         # Then
         for (meas1, meas2) in zip(measurements1.bitstrings, measurements2.bitstrings):
@@ -145,6 +127,6 @@ class TestCirqSimulator(QuantumSimulatorTests):
             assert ampl1 == ampl2
 
 
-class TestCirqSimulatorGates(QuantumSimulatorGatesTest):
-    atol_wavefunction = 1e-8
-    pass
+@pytest.mark.parametrize("contract", CIRCUIT_RUNNER_CONTRACTS)
+def test_cirq_runner_fulfills_circuit_runner_contracts(runner, contract):
+    assert contract(runner)
