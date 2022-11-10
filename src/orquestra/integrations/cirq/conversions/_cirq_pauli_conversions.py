@@ -9,7 +9,7 @@ from orquestra.quantum.operators import PauliRepresentation
 
 def pauliop_to_cirq_paulisum(
     pauli_operator: PauliRepresentation,
-    qubits: Union[List[cirq.GridQubit], List[cirq.LineQubit]] = None,
+    qubits: Union[List[cirq.GridQubit], List[cirq.LineQubit], None] = None,
 ) -> cirq.PauliSum:
     """Convert an orquestra PauliSum or PauliTerm to a cirq PauliSum
 
