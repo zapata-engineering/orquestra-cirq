@@ -26,14 +26,12 @@ from orquestra.integrations.cirq.simulator import CirqSimulator, QSimSimulator
 def simulator(request):
     return request.param
 
-# def simulator(request):
-    # return [request.param["runner"], request.param["atol_wavefunction"]]
-
 
 class TestCirqSimulator:
     @pytest.fixture(autouse=True)
     def _request_simulator(self, simulator):
-        self.runner, self.atol_wavefunction = [simulator.get("runner"), simulator.get("atol_wavefunction")]
+        self.runner = simulator.get("runner")
+        self.atol_wavefunction = simulator.get("atol_wavefunction")
 
     def test_setup_basic_simulators(self):
         runner = self.runner()
