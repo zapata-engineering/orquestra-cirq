@@ -2,6 +2,7 @@
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
 import sys
+from typing import Union
 
 import cirq
 
@@ -33,7 +34,7 @@ class CirqSimulator(CirqBasedSimulator):
     def __init__(
         self,
         noise_model: cirq.NOISE_MODEL_LIKE = None,
-        seed: int = None,
+        seed: Union[int, None] = None,
         param_resolver: "cirq.ParamResolverOrSimilarType" = None,
         qubit_order=cirq.ops.QubitOrder.DEFAULT,
     ):
