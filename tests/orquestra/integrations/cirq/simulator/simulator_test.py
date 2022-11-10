@@ -4,7 +4,13 @@
 import numpy as np
 import pytest
 from cirq import depolarize
-from orquestra.quantum.api.circuit_runner_contracts import CIRCUIT_RUNNER_CONTRACTS
+from orquestra.quantum.api.circuit_runner_contracts import (
+    CIRCUIT_RUNNER_CONTRACTS,
+    STRICT_CIRCUIT_RUNNER_CONTRACTS,
+)
+from orquestra.quantum.api.wavefunction_simulator_contracts import (
+    simulator_contracts_for_tolerance,
+)
 from orquestra.quantum.circuits import CNOT, Circuit, H, X
 from orquestra.quantum.operators import PauliSum
 
@@ -144,5 +150,17 @@ class TestCirqSimulator:
 
 @pytest.mark.parametrize("contract", CIRCUIT_RUNNER_CONTRACTS)
 def test_cirq_runner_fulfills_circuit_runner_contracts(simulator, contract):
+    runner = simulator.get("runner")
+    assert contract(runner())
+
+
+@pytest.mark.parametrize("contract", simulator_contracts_for_tolerance())
+def test_symbolic_simulator_fulfills_simulator_contracts(simulator, contract):
+    runner = simulator.get("runner")
+    assert contract(runner())
+
+
+@pytest.mark.parametrize("contract", STRICT_CIRCUIT_RUNNER_CONTRACTS)
+def test_symbolic_simulator_fulfills_strict_circuit_runnner(simulator, contract):
     runner = simulator.get("runner")
     assert contract(runner())
