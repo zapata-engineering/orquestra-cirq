@@ -168,12 +168,12 @@ def test_cirq_runner_fulfills_circuit_runner_contracts(simulator, contract):
 
 
 @pytest.mark.parametrize("contract", simulator_contracts_for_tolerance())
-def test_symbolic_simulator_fulfills_simulator_contracts(simulator, contract):
+def test_cirq_simulator_fulfills_simulator_contracts(simulator, contract):
     runner = simulator.get("runner")
     assert contract(runner())
 
 
 @pytest.mark.parametrize("contract", STRICT_CIRCUIT_RUNNER_CONTRACTS)
-def test_symbolic_simulator_fulfills_strict_circuit_runnner(simulator, contract):
+def test_cirq_simulator_fulfills_strict_circuit_runnner(simulator, contract):
     runner = simulator.get("runner")
     assert contract(runner())
