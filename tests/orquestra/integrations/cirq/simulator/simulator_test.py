@@ -128,8 +128,6 @@ class TestCirqBasedSimulator:
         # Given
         simulator1 = runner(normalize_wavefunction=False)
         simulator2 = runner(normalize_wavefunction=True)
-
-
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
         # When
         wavefunction = simulator1.get_wavefunction(circuit)
@@ -165,4 +163,3 @@ def test_symbolic_simulator_fulfills_simulator_contracts(simulator, contract):
 def test_symbolic_simulator_fulfills_strict_circuit_runnner(simulator, contract):
     runner = simulator.get("runner")
     assert contract(runner())
-
