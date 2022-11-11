@@ -1,7 +1,7 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
-from typing import List, Union
+from typing import List, Optional, Union
 
 import cirq
 from orquestra.quantum.operators import PauliRepresentation
@@ -9,7 +9,7 @@ from orquestra.quantum.operators import PauliRepresentation
 
 def pauliop_to_cirq_paulisum(
     pauli_operator: PauliRepresentation,
-    qubits: Union[List[cirq.GridQubit], List[cirq.LineQubit], None] = None,
+    qubits: Optional[Union[List[cirq.GridQubit], List[cirq.LineQubit]]] = None,
 ) -> cirq.PauliSum:
     """Convert an orquestra PauliSum or PauliTerm to a cirq PauliSum
 
