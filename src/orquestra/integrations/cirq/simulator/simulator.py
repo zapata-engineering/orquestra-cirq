@@ -4,6 +4,7 @@
 import sys
 from typing import Optional
 
+
 import cirq
 
 from ._base import CirqBasedSimulator
