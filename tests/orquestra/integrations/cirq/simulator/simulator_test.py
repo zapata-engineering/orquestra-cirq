@@ -87,6 +87,20 @@ class TestCirqBasedSimulator:
             for measurement in measurements.bitstrings:
                 assert measurement == (1, 0, 0)
 
+    def test_run_circuit_and_measure_seed(self):
+        # Given
+        circuit = Circuit([X(0), CNOT(1, 2)])
+        simulator1 = self.runner(seed=12)
+        simulator2 = self.runner(seed=12)
+
+        # When
+        measurements1 = simulator1.run_and_measure(circuit, n_samples=1000)
+        measurements2 = simulator2.run_and_measure(circuit, n_samples=1000)
+
+        # Then
+        for (meas1, meas2) in zip(measurements1.bitstrings, measurements2.bitstrings):
+            assert meas1 == meas2
+
     def test_get_wavefunction(self):
         runner = self.runner()
         # Given
