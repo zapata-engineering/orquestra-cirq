@@ -27,7 +27,7 @@ def simulator(request):
     return request.param
 
 
-class TestCirqSimulator:
+class TestCirqBasedSimulator:
     @pytest.fixture(autouse=True)
     def _request_simulator(self, simulator):
         self.runner = simulator.get("runner")
