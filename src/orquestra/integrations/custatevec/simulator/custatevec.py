@@ -8,7 +8,7 @@ from typing import Optional
 
 import cirq
 
-from ...cirq.simulator.qsim_simulator import QSimSimulator
+from ...cirq.runner.qsim_simulator import QSimSimulator
 
 try:
     import qsimcirq  # type: ignore
