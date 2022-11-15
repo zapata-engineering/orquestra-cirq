@@ -14,7 +14,7 @@ from orquestra.quantum.api.wavefunction_simulator_contracts import (
 from orquestra.quantum.circuits import CNOT, Circuit, H, X
 from orquestra.quantum.operators import PauliSum
 
-from orquestra.integrations.cirq.runner import CirqSimulator, QSimSimulator
+from orquestra.integrations.cirq.simulator import CirqSimulator, QSimSimulator
 
 
 @pytest.fixture(
