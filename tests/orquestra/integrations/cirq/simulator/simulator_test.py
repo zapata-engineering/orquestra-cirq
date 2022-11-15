@@ -87,6 +87,20 @@ class TestCirqBasedSimulator:
             for measurement in measurements.bitstrings:
                 assert measurement == (1, 0, 0)
 
+    def test_run_circuit_and_measure_seed(self):
+        # Given
+        circuit = Circuit([X(0), CNOT(1, 2)])
+        simulator1 = self.runner(seed=12)
+        simulator2 = self.runner(seed=12)
+
+        # When
+        measurements1 = simulator1.run_and_measure(circuit, n_samples=1000)
+        measurements2 = simulator2.run_and_measure(circuit, n_samples=1000)
+
+        # Then
+        for (meas1, meas2) in zip(measurements1.bitstrings, measurements2.bitstrings):
+            assert meas1 == meas2
+
     def test_get_wavefunction(self):
         runner = self.runner()
         # Given
@@ -129,7 +143,6 @@ class TestCirqBasedSimulator:
         simulator1 = runner(normalize_wavefunction=False)
         simulator2 = runner(normalize_wavefunction=True)
 
-
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
         # When
         wavefunction = simulator1.get_wavefunction(circuit)
@@ -156,13 +169,13 @@ def test_cirq_runner_fulfills_circuit_runner_contracts(simulator, contract):
 
 
 @pytest.mark.parametrize("contract", simulator_contracts_for_tolerance())
-def test_symbolic_simulator_fulfills_simulator_contracts(simulator, contract):
+def test_cirq_simulator_fulfills_simulator_contracts(simulator, contract):
     runner = simulator.get("runner")
     assert contract(runner())
 
 
 @pytest.mark.parametrize("contract", STRICT_CIRCUIT_RUNNER_CONTRACTS)
-def test_symbolic_simulator_fulfills_strict_circuit_runnner(simulator, contract):
+def test_cirq_simulator_fulfills_strict_circuit_runnner(simulator, contract):
     runner = simulator.get("runner")
     assert contract(runner())
 
