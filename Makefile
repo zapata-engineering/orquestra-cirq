@@ -12,3 +12,20 @@ github_actions:
 
 build-system-deps:
 	$(PYTHON) -m pip install setuptools wheel "setuptools_scm>=6.0"
+
+
+coverage:
+	$(PYTHON) -m pytest -m "not custatevec" \
+		--cov=src \
+		--cov-fail-under=$(MIN_COVERAGE) tests\
+		--no-cov-on-fail \
+		--cov-report xml \
+		&& echo Code coverage Passed the $(MIN_COVERAGE)% mark!
+
+totalcoverage:
+	$(PYTHON) -m pytest -m "custatevec or not custatevec" \
+		--cov=src \
+		--cov-fail-under=$(MIN_COVERAGE) tests\
+		--no-cov-on-fail \
+		--cov-report xml \
+		&& echo Code coverage Passed the $(MIN_COVERAGE)% mark!
