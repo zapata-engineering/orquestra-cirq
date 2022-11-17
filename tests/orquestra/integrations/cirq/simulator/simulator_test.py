@@ -141,8 +141,8 @@ class TestCirqBasedSimulator:
         if isinstance(simulator(), CirqSimulator):
             pytest.skip("Normalization not required for CirqSimulator")
         # Given
-        simulator1 = runner(normalize_wavefunction=False)
-        simulator2 = runner(normalize_wavefunction=True)
+        simulator1 = simulator(normalize_wavefunction=False)
+        simulator2 = simulator(normalize_wavefunction=True)
 
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
         # When
