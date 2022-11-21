@@ -7,7 +7,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-
     # Load a specific version of Python
     - name: Setup python
       uses: actions/setup-python@v2
@@ -23,7 +22,7 @@ runs:
 
     - name: Run test coverage
       shell: bash
-      run: make coverage
+      run: make totalcoverage
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2

@@ -28,7 +28,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Create Key and Start EC2
         id: startec2
@@ -74,7 +74,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Terminate the instance
         run: aws ec2 terminate-instances --instance-ids ${{needs.StartTheRunner.outputs.ec2-instance-id}} --output text
@@ -91,7 +91,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID}}
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Remove keypair
         run: aws ec2 delete-key-pair --key-name ${{secrets.KEYNAME }}
