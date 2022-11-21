@@ -11,6 +11,7 @@ from orquestra.quantum.api.circuit_runner_contracts import (
 from orquestra.quantum.api.wavefunction_simulator_contracts import (
     simulator_contracts_for_tolerance,
     simulator_contracts_with_nontrivial_initial_state,
+    simulator_gate_compatibility_contracts,
 )
 from orquestra.quantum.circuits import CNOT, Circuit, H, X
 from orquestra.quantum.operators import PauliSum
@@ -181,5 +182,11 @@ def test_cirq_wf_simulator_fulfills_wf_simulator_contracts(wf_simulator, contrac
 
 @pytest.mark.parametrize("contract", STRICT_CIRCUIT_RUNNER_CONTRACTS)
 def test_cirq_simulator_fulfills_strict_circuit_runnner(wf_simulator, contract):
+    simulator = wf_simulator.get("simulator")
+    assert contract(simulator())
+
+
+@pytest.mark.parametrize("contract", simulator_gate_compatibility_contracts())
+def test_cirq_simulator_uses_correct_gate_definitionscontract(wf_simulator, contract):
     simulator = wf_simulator.get("simulator")
     assert contract(simulator())
