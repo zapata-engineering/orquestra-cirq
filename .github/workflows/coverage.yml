@@ -21,28 +21,28 @@ env:
   subnet_id: ${{ secrets.SUBNET_ID }}
 
 jobs:
-  StartTheRunner:
-    # runs-on: ubuntu-latest
-    # steps:
-    #   - name: Configure AWS credentials
-    #     uses: aws-actions/configure-aws-credentials@v1
-    #     with:
-    #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
-    #       aws-region: ${{ secrets.AWS_REGION }}
-    #   - name: Create Key and Start EC2
-    #     id: startec2
-    #     run: |
-    #       aws ec2 create-key-pair --key-name $keyname --query "KeyMaterial" --output text >> $keyname.pem
-    #       chmod 400 $keyname.pem
-    #       instance_id=$(aws ec2 run-instances --image-id $image_id --count 1 --instance-type p3.2xlarge --key-name $keyname --security-group-ids $security_group_id --subnet-id $subnet_id --query "Instances[].InstanceId" --output text)
-    #       aws ec2 wait instance-status-ok --instance-ids $instance_id
-    #       echo instance_id=$instance_id >> $GITHUB_ENV
-    #       echo "::set-output name=ec2_instance_id::$instance_id
+  # StartTheRunner:
+  # runs-on: ubuntu-latest
+  # steps:
+  #   - name: Configure AWS credentials
+  #     uses: aws-actions/configure-aws-credentials@v1
+  #     with:
+  #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
+  #       aws-region: ${{ secrets.AWS_REGION }}
+  #   - name: Create Key and Start EC2
+  #     id: startec2
+  #     run: |
+  #       aws ec2 create-key-pair --key-name $keyname --query "KeyMaterial" --output text >> $keyname.pem
+  #       chmod 400 $keyname.pem
+  #       instance_id=$(aws ec2 run-instances --image-id $image_id --count 1 --instance-type p3.2xlarge --key-name $keyname --security-group-ids $security_group_id --subnet-id $subnet_id --query "Instances[].InstanceId" --output text)
+  #       aws ec2 wait instance-status-ok --instance-ids $instance_id
+  #       echo instance_id=$instance_id >> $GITHUB_ENV
+  #       echo "::set-output name=ec2_instance_id::$instance_id
 
   # The job ID has to match repo settings for PR required checks
   TestCoverage:
-    needs: StartTheRunner
+    # needs: StartTheRunner
     runs-on: GPU_self_hosted_runner
     # Run jobs for a couple of Python versions.
     strategy:
