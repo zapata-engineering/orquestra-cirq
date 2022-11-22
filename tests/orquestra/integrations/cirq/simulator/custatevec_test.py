@@ -24,11 +24,11 @@ def simulator():
 
 @pytest.mark.custatevec
 class TestCirqBasedSimulator:
-    def test_setup_basic_simulators(self):
+    def test_setup_basic_simulators(self, simulator):
         assert isinstance(simulator, CuStateVecSimulator)
         assert simulator.noise_model is None
 
-    def test_run_and_measure(self):
+    def test_run_and_measure(self, simulator):
         # Given
         runner = CuStateVecSimulator()
         circuit = Circuit([X(0), CNOT(1, 2)])
@@ -38,7 +38,7 @@ class TestCirqBasedSimulator:
         for measurement in measurements.bitstrings:
             assert measurement == (1, 0, 0)
 
-    def test_measuring_inactive_qubits(self):
+    def test_measuring_inactive_qubits(self, simulator):
 
         runner = CuStateVecSimulator()
         # Given
@@ -50,7 +50,7 @@ class TestCirqBasedSimulator:
         for measurement in measurements.bitstrings:
             assert measurement == (1, 0, 0, 0)
 
-    def test_run_batch_and_measure(self):
+    def test_run_batch_and_measure(self, simulator):
 
         runner = CuStateVecSimulator()
         # Given
@@ -68,7 +68,7 @@ class TestCirqBasedSimulator:
             for measurement in measurements.bitstrings:
                 assert measurement == (1, 0, 0)
 
-    def test_run_circuit_and_measure_seed(self):
+    def test_run_circuit_and_measure_seed(self, simulator):
         # Given
         circuit = Circuit([X(0), CNOT(1, 2)])
         simulator1 = CuStateVecSimulator(seed=12)
@@ -82,7 +82,7 @@ class TestCirqBasedSimulator:
         for (meas1, meas2) in zip(measurements1.bitstrings, measurements2.bitstrings):
             assert meas1 == meas2
 
-    def test_get_wavefunction(self):
+    def test_get_wavefunction(self, simulator):
         runner = CuStateVecSimulator()
         # Given
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
@@ -99,7 +99,7 @@ class TestCirqBasedSimulator:
             wavefunction.amplitudes[7], (1 / np.sqrt(2) + 0j), atol=10e-15
         )
 
-    def test_get_noisy_exact_expectation_values(self):
+    def test_get_noisy_exact_expectation_values(self, simulator):
         # Given
         noise = 0.0002
         noise_model = depolarize(p=noise)
@@ -126,13 +126,13 @@ def test_cirq_runner_fulfills_circuit_runner_contracts(contract):
 
 @pytest.mark.custatevec
 @pytest.mark.parametrize("contract", simulator_contracts_for_tolerance())
-def test_cirq_simulator_fulfills_simulator_contracts(simulator, contract):
+def test_cirq_simulator_fulfills_simulator_contracts(contract):
     runner = CuStateVecSimulator()
     assert contract(runner)
 
 
 @pytest.mark.custatevec
 @pytest.mark.parametrize("contract", STRICT_CIRCUIT_RUNNER_CONTRACTS)
-def test_cirq_simulator_fulfills_strict_circuit_runnner(simulator, contract):
+def test_cirq_simulator_fulfills_strict_circuit_runnner(contract):
     runner = CuStateVecSimulator()
     assert contract(runner)
