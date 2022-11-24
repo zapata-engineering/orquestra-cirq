@@ -73,7 +73,6 @@ class TestCirqBasedSimulator:
 
     def test_run_batch_and_measure(self):
 
-        runner = self.runner()
         simulator = self.simulator()
         # Given
         circuit = Circuit([X(0), CNOT(1, 2)])
@@ -111,7 +110,7 @@ class TestCirqBasedSimulator:
         circuit = Circuit([H(0), CNOT(0, 1), CNOT(1, 2)])
 
         # When
-        wavefunction = runner.get_wavefunction(circuit)
+        wavefunction = simulator.get_wavefunction(circuit)
         # Then
         assert isinstance(wavefunction.amplitudes, np.ndarray)
         assert len(wavefunction.amplitudes) == 8
@@ -131,7 +130,7 @@ class TestCirqBasedSimulator:
         qubit_operator = PauliSum("-1*Z0*Z1 + X0*X2")
         target_values = np.array([-0.9986673775881747, 0.0])
 
-        expectation_values = runner.get_exact_noisy_expectation_values(
+        expectation_values = simulator.get_exact_noisy_expectation_values(
             circuit, qubit_operator
         )
         np.testing.assert_almost_equal(
