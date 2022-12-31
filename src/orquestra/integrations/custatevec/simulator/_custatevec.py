@@ -17,24 +17,23 @@ except ModuleNotFoundError:
 
 
 class CuStateVecSimulator(QSimSimulator):
+    """Qsimcirq simulator that using Nvidia GPUs for all simulations.
 
-    """CustatevecSimulator is qsimcirq simulator that
-       uses Nvidia GPUs for all simulation. CUDA toolkit and some dependency tools
-       must be installed. The installation guidelines are provided in
-       https://quantumai.google/qsim/tutorials/gcp_gpu.
+    CUDA toolkit and some dependency tools must be installed. The installation
+    guidelines are provided in https://quantumai.google/qsim/tutorials/gcp_gpu.
+
     Args:
         noise_model: an optional noise model to pass in for noisy simulations
-        param_resolver: Optional arg that defines the
-        parameters to run with the program.
+        param_resolver: Optional arg that defines the parameters to run with
+          the program.
         qubit_order: Optional arg that defines the ordering of qubits.
         seed: seed for random number generator.
         circuit_memoization_size: Optional arg tht defines the number of
-        last translated circuits to be memoized from simulation executions,
-        to eliminate translation overhead.
-        qsim_options:  An options dict or QSimOptions object with options
-        to use for all circuits run using this simulator. See QSimOptions from
-        qsimcirq for more details.
-
+          last translated circuits to be memoized from simulation executions,
+          to eliminate translation overhead.
+        qsim_options: An options dict or QSimOptions object with options
+          to use for all circuits run using this simulator. See QSimOptions from
+          qsimcirq for more details.
     """
 
     supports_batching = True

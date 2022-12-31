@@ -21,7 +21,7 @@ from ..conversions import export_to_cirq
 
 
 class CirqBasedSimulator(BaseWavefunctionSimulator):
-
+    """ABC for all Cirq based simulators."""
     supports_batching = True
     batch_size = sys.maxsize
 
