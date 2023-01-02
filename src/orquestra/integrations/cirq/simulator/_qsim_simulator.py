@@ -45,7 +45,6 @@ class QSimSimulator(CirqBasedSimulator):
     Attributes:
         simulator: Qsim simulator this class uses with the options defined.
         noise_model: an optional noise model to pass in for noisy simulations
-        qubit_order: qubit_order: Optional arg that defines the ordering of qubits.
         param_resolver: param_resolver: Optional arg that defines the
             parameters to run with the program.
         qubit_order: Optional arg that defines the ordering of qubits.
