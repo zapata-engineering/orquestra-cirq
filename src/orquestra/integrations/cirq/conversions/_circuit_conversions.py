@@ -283,8 +283,8 @@ def import_from_cirq(obj):
     result in custom gates. See `help(orquestra.quantum.circuits)` for examples of
     custom gates.
 
-    Also note that only objects using only LineQubits are supported, as currently there
-    is no notion of GridQubit in Orquestra circuits.
+    Also note that objects using GridQubits are never supported. NamedQubits are only
+    supported inside circuits, not as standalone Operations.
     """
     return _import_from_cirq(obj)
 
@@ -371,6 +371,7 @@ def _convert_gate_operation_to_orquestra(operation) -> _gates.GateOperation:
     if not all(isinstance(qubit, cirq.LineQubit) for qubit in operation.qubits):
         raise NotImplementedError(
             f"Failed to import {operation}. Only LineQubits are supported."
+            "for gates. Try converting NamedQubits inside a circuit instead."
         )
 
     imported_gate = _import_from_cirq(operation.gate)
@@ -391,6 +392,40 @@ def _convert_gate_operation_to_orquestra(operation) -> _gates.GateOperation:
 
 @_import_from_cirq.register
 def _import_circuit_from_cirq(circuit: cirq.Circuit) -> _circuit.Circuit:
+    has_grid_qubit = [
+        any(isinstance(qubit, cirq.GridQubit) for qubit in operation.qubits)
+        for operation in circuit.all_operations()
+    ]
+    if any(has_grid_qubit):
+        grid_qubit_operation = circuit.all_operations()[has_grid_qubit.index(True)]
+        raise NotImplementedError(
+            f"Failed to import {grid_qubit_operation}. GridQubits are not supported."
+        )
+    circuit = replace_named_qubits_with_line_qubits(circuit)
     return _circuit.Circuit(
         [_import_from_cirq(op) for op in chain.from_iterable(circuit.moments)]
     )
+
+
+def replace_named_qubits_with_line_qubits(circuit: cirq.Circuit) -> cirq.Circuit:
+    all_qubits = sorted(circuit.all_qubits())
+    max_line_id = 0
+    contains_line_qubit = False
+    for qubit in all_qubits:
+        if isinstance(qubit, cirq.LineQubit):
+            contains_line_qubit = True
+            if qubit.x < 0:
+                raise ValueError(
+                    f"LineQubit with negative index {qubit.x} is not supported."
+                )
+            if qubit.x > max_line_id:
+                max_line_id = qubit.x
+
+    qubit_map = {}
+    current_qubit_id = max_line_id + 1 if contains_line_qubit else 0
+    for qubit in all_qubits:
+        if isinstance(qubit, cirq.NamedQubit):
+            qubit_map[qubit] = cirq.LineQubit(current_qubit_id)
+            current_qubit_id += 1
+
+    return circuit.transform_qubits(qubit_map)

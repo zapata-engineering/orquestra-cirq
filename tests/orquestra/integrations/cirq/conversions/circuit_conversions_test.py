@@ -5,14 +5,13 @@ import cirq
 import numpy as np
 import pytest
 import sympy
-from orquestra.quantum.circuits import _builtin_gates, _circuit, _gates
-from packaging.version import parse
-
 from orquestra.integrations.cirq.conversions._circuit_conversions import (
     export_to_cirq,
     import_from_cirq,
     make_rotation_factory,
 )
+from orquestra.quantum.circuits import _builtin_gates, _circuit, _gates
+from packaging.version import parse
 
 # --------- gates ---------
 
@@ -337,3 +336,27 @@ class TestImportingFromCirq:
     def test_with_unsupported_gates_raises_not_implemented_error(self, cirq_circuit):
         with pytest.raises(NotImplementedError):
             import_from_cirq(cirq_circuit)
+
+    def test_only_named_qubits_are_converted_to_labeled_qubit(self):
+        cirq_circuit = cirq.Circuit(cirq.X(cirq.NamedQubit("a")))
+        cirq_circuit += cirq.CNOT(cirq.NamedQubit("a"), cirq.NamedQubit("b"))
+        circuit = import_from_cirq(cirq_circuit)
+        assert circuit.n_qubits == 2
+        assert circuit.operations[0].qubit_indices == (0,)
+        assert circuit.operations[1].qubit_indices == (0, 1)
+
+    def test_named_qubits_are_converted_to_labeled_qubit(self):
+        cirq_circuit = cirq.Circuit(cirq.X(cirq.LineQubit(0)))
+        cirq_circuit += cirq.CNOT(cirq.NamedQubit("a"), cirq.NamedQubit("b"))
+        circuit = import_from_cirq(cirq_circuit)
+        assert circuit.n_qubits == 3
+        assert circuit.operations[0].qubit_indices == (0,)
+        assert circuit.operations[1].qubit_indices == (1, 2)
+
+    def test_named_qubit_in_gate_operation_throws_error(self):
+        with pytest.raises(NotImplementedError):
+            import_from_cirq(cirq.X(cirq.NamedQubit("a")))
+
+    def test_negative_line_qubit_in_gate_operation_throws_error(self):
+        with pytest.raises(ValueError):
+            import_from_cirq(cirq.Circuit([cirq.X(cirq.LineQubit(-1))]))
