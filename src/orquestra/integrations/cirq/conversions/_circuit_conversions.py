@@ -370,8 +370,8 @@ def _gen_custom_gate_name(gate_cls, matrix: np.ndarray):
 def _convert_gate_operation_to_orquestra(operation) -> _gates.GateOperation:
     if not all(isinstance(qubit, cirq.LineQubit) for qubit in operation.qubits):
         raise NotImplementedError(
-            f"Failed to import {operation}. Only GateOperations on LineQubits "
-            "are supported. Try converting the Gate and adding qubits after."
+            f"Failed to import {operation}. Only GateOperations on LineQubits are"
+            "supported. Try converting the underlying Gate and adding qubits after."
         )
 
     imported_gate = _import_from_cirq(operation.gate)
