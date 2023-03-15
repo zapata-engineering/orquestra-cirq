@@ -337,3 +337,67 @@ class TestImportingFromCirq:
     def test_with_unsupported_gates_raises_not_implemented_error(self, cirq_circuit):
         with pytest.raises(NotImplementedError):
             import_from_cirq(cirq_circuit)
+
+    @pytest.mark.parametrize(
+        "cirq_circuit, num_qubits, target_labels",
+        [
+            (
+                cirq.Circuit(
+                    [
+                        cirq.X(cirq.NamedQubit("a")),
+                        cirq.CNOT(cirq.NamedQubit("a"), cirq.NamedQubit("b")),
+                    ]
+                ),
+                2,
+                [(0,), (0, 1)],
+            ),
+            (
+                cirq.Circuit(
+                    [
+                        cirq.X(cirq.LineQubit(0)),
+                        cirq.CNOT(cirq.NamedQubit("a"), cirq.NamedQubit("b")),
+                    ]
+                ),
+                3,
+                [(0,), (1, 2)],
+            ),
+            (
+                cirq.Circuit(
+                    [
+                        cirq.X(cirq.LineQubit(20)),
+                        cirq.X(cirq.NamedQubit("b")),
+                    ]
+                ),
+                22,
+                [(20,), (21,)],
+            ),
+            (
+                cirq.Circuit(
+                    [
+                        cirq.X(cirq.NamedQubit("a")),
+                        cirq.X(cirq.LineQubit(0)),
+                        cirq.X(cirq.NamedQubit("b")),
+                    ]
+                ),
+                3,
+                [(1,), (0,), (2,)],
+            ),
+        ],
+    )
+    def test_named_qubits_are_converted_to_labeled_qubit(
+        self, cirq_circuit, num_qubits, target_labels
+    ):
+        circuit = import_from_cirq(cirq_circuit)
+        assert circuit.n_qubits == num_qubits
+        assert all(
+            target_label == operation.qubit_indices
+            for target_label, operation in zip(target_labels, circuit.operations)
+        )
+
+    def test_named_qubit_in_gate_operation_throws_error(self):
+        with pytest.raises(NotImplementedError):
+            import_from_cirq(cirq.X(cirq.NamedQubit("a")))
+
+    def test_negative_line_qubit_in_gate_operation_throws_error(self):
+        with pytest.raises(ValueError):
+            import_from_cirq(cirq.Circuit([cirq.X(cirq.LineQubit(-1))]))
