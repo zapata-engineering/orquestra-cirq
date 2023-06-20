@@ -96,6 +96,8 @@ ORQUESTRA_BUILTIN_GATE_NAME_TO_CIRQ_GATE: Dict[str, Callable] = {
     "H": cirq.H,
     "S": cirq.S,
     "T": cirq.T,
+    "RESET": cirq.ResetChannel(),
+    "SX": cirq.XPowGate(exponent=0.5),
     "RX": cirq.rx,
     "RY": cirq.ry,
     "RZ": cirq.rz,
@@ -187,7 +189,10 @@ EIGENGATE_ROTATIONS = {
     (cirq.ISwapPowGate, 0.0): _builtin_gates.XY,
 }
 
-CIRQ_GATE_SPECIAL_CASES = {cirq.CSWAP: _builtin_gates.SWAP.controlled(1)}
+CIRQ_GATE_SPECIAL_CASES = {
+    cirq.CSWAP: _builtin_gates.SWAP.controlled(1),
+    cirq.ResetChannel(): _builtin_gates.RESET,
+}
 
 qubit_index = attrgetter("x")
 
