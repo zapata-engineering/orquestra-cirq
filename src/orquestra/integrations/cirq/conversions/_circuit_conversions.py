@@ -132,6 +132,11 @@ EIGENGATE_SPECIAL_CASES = {
         (cirq.S**-1).exponent,
     ): _builtin_gates.S.dagger,
     (
+        type(cirq.X**0.5),
+        (cirq.X**0.5).global_shift,
+        (cirq.X**0.5).exponent,
+    ): _builtin_gates.SX,
+    (
         type(cirq.T**-1),
         (cirq.T**-1).global_shift,
         (cirq.T**-1).exponent,

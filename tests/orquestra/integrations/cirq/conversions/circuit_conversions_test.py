@@ -5,14 +5,13 @@ import cirq
 import numpy as np
 import pytest
 import sympy
-from orquestra.quantum.circuits import _builtin_gates, _circuit, _gates
-from packaging.version import parse
-
 from orquestra.integrations.cirq.conversions._circuit_conversions import (
     export_to_cirq,
     import_from_cirq,
     make_rotation_factory,
 )
+from orquestra.quantum.circuits import _builtin_gates, _circuit, _gates
+from packaging.version import parse
 
 # --------- gates ---------
 
@@ -29,12 +28,14 @@ EQUIVALENT_NON_PARAMETRIC_GATES = [
     (_builtin_gates.H, cirq.H),
     (_builtin_gates.S, cirq.S),
     (_builtin_gates.S.dagger, cirq.S**-1),
+    (_builtin_gates.SX, cirq.X**0.5),
     (_builtin_gates.T, cirq.T),
     (_builtin_gates.T.dagger, cirq.T**-1),
     (_builtin_gates.CNOT, cirq.CNOT),
     (_builtin_gates.CZ, cirq.CZ),
     (_builtin_gates.SWAP, cirq.SWAP),
     (_builtin_gates.ISWAP, cirq.ISWAP),
+    (_builtin_gates.RESET, cirq.ResetChannel()),
 ]
 
 EQUIVALENT_PARAMETRIC_GATES = [
@@ -109,6 +110,8 @@ class TestGateConversion:
     def test_matrices_of_corresponding_orquestra_and_cirq_gates_are_equal(
         self, orquestra_gate, cirq_gate
     ):
+        if orquestra_gate.name == "RESET":
+            pytest.skip("RESET gate is not unitary")
         orquestra_matrix = np.array(orquestra_gate.matrix).astype(np.complex128)
 
         assert _is_scaled_identity(
