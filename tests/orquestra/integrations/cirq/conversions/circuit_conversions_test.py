@@ -41,7 +41,6 @@ EQUIVALENT_NON_PARAMETRIC_GATES = [
     (_builtin_gates.CZ, cirq.CZ),
     (_builtin_gates.SWAP, cirq.SWAP),
     (_builtin_gates.ISWAP, cirq.ISWAP),
-    (_wavefunction_operations.ResetOperation, cirq.ResetChannel()),
 ]
 
 EQUIVALENT_PARAMETRIC_GATES = [
@@ -116,8 +115,6 @@ class TestGateConversion:
     def test_matrices_of_corresponding_orquestra_and_cirq_gates_are_equal(
         self, orquestra_gate, cirq_gate
     ):
-        if orquestra_gate == _wavefunction_operations.ResetOperation:
-            pytest.skip("RESET gate is not unitary")
         orquestra_matrix = np.array(orquestra_gate.matrix).astype(np.complex128)
 
         assert _is_scaled_identity(
@@ -154,6 +151,13 @@ def test_importing_gate_in_power_form_gives_expected_gate(orquestra_gate, cirq_g
         )
 
     assert import_from_cirq(pow_gate) == orquestra_gate
+
+
+def test_importing_reset_gives_expected_gate():
+    reset_gate = cirq.ResetChannel()
+
+    assert import_from_cirq(reset_gate) == _wavefunction_operations.ResetOperation
+    assert export_to_cirq(_wavefunction_operations.ResetOperation) == reset_gate
 
 
 # circuits ---------
