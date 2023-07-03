@@ -5,7 +5,12 @@ import cirq
 import numpy as np
 import pytest
 import sympy
-from orquestra.quantum.circuits import _builtin_gates, _circuit, _gates
+from orquestra.quantum.circuits import (
+    _builtin_gates,
+    _circuit,
+    _gates,
+    _wavefunction_operations,
+)
 from packaging.version import parse
 
 from orquestra.integrations.cirq.conversions._circuit_conversions import (
@@ -29,6 +34,7 @@ EQUIVALENT_NON_PARAMETRIC_GATES = [
     (_builtin_gates.H, cirq.H),
     (_builtin_gates.S, cirq.S),
     (_builtin_gates.S.dagger, cirq.S**-1),
+    (_builtin_gates.SX, cirq.X**0.5),
     (_builtin_gates.T, cirq.T),
     (_builtin_gates.T.dagger, cirq.T**-1),
     (_builtin_gates.CNOT, cirq.CNOT),
@@ -147,6 +153,14 @@ def test_importing_gate_in_power_form_gives_expected_gate(orquestra_gate, cirq_g
     assert import_from_cirq(pow_gate) == orquestra_gate
 
 
+def test_importing_reset_gives_expected_gate():
+    cirq_reset_gate = cirq.ResetChannel()(lq(0))
+    orq_reset_gate = _wavefunction_operations.ResetOperation(0)
+
+    assert import_from_cirq(cirq_reset_gate) == orq_reset_gate
+    assert export_to_cirq(orq_reset_gate) == cirq_reset_gate
+
+
 # circuits ---------
 
 
@@ -179,6 +193,10 @@ EQUIVALENT_CIRCUITS = [
     (
         _circuit.Circuit([_builtin_gates.Y.controlled(2)(4, 5, 2)]),
         cirq.Circuit([cirq.Y.controlled(2)(lq(4), lq(5), lq(2))]),
+    ),
+    (
+        _circuit.Circuit([_wavefunction_operations.ResetOperation(0)]),
+        cirq.Circuit([cirq.reset(lq(0))]),
     ),
 ]
 

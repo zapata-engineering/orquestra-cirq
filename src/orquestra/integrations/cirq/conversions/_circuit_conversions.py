@@ -11,7 +11,12 @@ from typing import Callable, Dict, Type, Union, overload
 import cirq
 import numpy as np
 import sympy
-from orquestra.quantum.circuits import _builtin_gates, _circuit, _gates
+from orquestra.quantum.circuits import (
+    _builtin_gates,
+    _circuit,
+    _gates,
+    _wavefunction_operations,
+)
 from orquestra.quantum.typing import Parameter
 
 RotationGateFactory = Callable[[Parameter], cirq.EigenGate]
@@ -96,6 +101,7 @@ ORQUESTRA_BUILTIN_GATE_NAME_TO_CIRQ_GATE: Dict[str, Callable] = {
     "H": cirq.H,
     "S": cirq.S,
     "T": cirq.T,
+    "SX": cirq.XPowGate(exponent=0.5),
     "RX": cirq.rx,
     "RY": cirq.ry,
     "RZ": cirq.rz,
@@ -129,6 +135,11 @@ EIGENGATE_SPECIAL_CASES = {
         (cirq.S**-1).global_shift,
         (cirq.S**-1).exponent,
     ): _builtin_gates.S.dagger,
+    (
+        type(cirq.X**0.5),
+        (cirq.X**0.5).global_shift,
+        (cirq.X**0.5).exponent,
+    ): _builtin_gates.SX,
     (
         type(cirq.T**-1),
         (cirq.T**-1).global_shift,
@@ -187,7 +198,10 @@ EIGENGATE_ROTATIONS = {
     (cirq.ISwapPowGate, 0.0): _builtin_gates.XY,
 }
 
-CIRQ_GATE_SPECIAL_CASES = {cirq.CSWAP: _builtin_gates.SWAP.controlled(1)}
+CIRQ_GATE_SPECIAL_CASES = {
+    cirq.CSWAP: _builtin_gates.SWAP.controlled(1),
+    cirq.ResetChannel(): _wavefunction_operations.ResetOperation,
+}
 
 qubit_index = attrgetter("x")
 
@@ -215,7 +229,7 @@ def export_to_cirq(obj):
 
     Exporting of user-defined gates is atm not supported.
     """
-    # We need a facade wrapper becase mypy does not yet support overloads for
+    # We need a facade wrapper because mypy does not yet support overloads for
     # functools.singledispatch. See mypy #8356.
 
     return _export_to_cirq(obj)
@@ -270,6 +284,13 @@ def _export_circuit_to_cirq(circuit: _circuit.Circuit) -> cirq.Circuit:
     return cirq.Circuit(
         [_export_to_cirq(operation) for operation in circuit.operations]
     )
+
+
+@_export_to_cirq.register
+def _export_reset_operation_to_cirq(
+    operation: _wavefunction_operations.ResetOperation,
+) -> cirq.Gate:
+    return cirq.ResetChannel()(*map(cirq.LineQubit, operation.qubit_indices))
 
 
 def import_from_cirq(obj):
