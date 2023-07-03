@@ -10,7 +10,12 @@ from orquestra.integrations.cirq.conversions._circuit_conversions import (
     import_from_cirq,
     make_rotation_factory,
 )
-from orquestra.quantum.circuits import _builtin_gates, _circuit, _gates
+from orquestra.quantum.circuits import (
+    _builtin_gates,
+    _circuit,
+    _gates,
+    _wavefunction_operations,
+)
 from packaging.version import parse
 
 # --------- gates ---------
@@ -35,7 +40,7 @@ EQUIVALENT_NON_PARAMETRIC_GATES = [
     (_builtin_gates.CZ, cirq.CZ),
     (_builtin_gates.SWAP, cirq.SWAP),
     (_builtin_gates.ISWAP, cirq.ISWAP),
-    (_builtin_gates.RESET, cirq.ResetChannel()),
+    (_wavefunction_operations.ResetOperation, cirq.ResetChannel()),
 ]
 
 EQUIVALENT_PARAMETRIC_GATES = [
@@ -110,7 +115,7 @@ class TestGateConversion:
     def test_matrices_of_corresponding_orquestra_and_cirq_gates_are_equal(
         self, orquestra_gate, cirq_gate
     ):
-        if orquestra_gate.name == "RESET":
+        if orquestra_gate == _wavefunction_operations.ResetOperation:
             pytest.skip("RESET gate is not unitary")
         orquestra_matrix = np.array(orquestra_gate.matrix).astype(np.complex128)
 
@@ -182,6 +187,10 @@ EQUIVALENT_CIRCUITS = [
     (
         _circuit.Circuit([_builtin_gates.Y.controlled(2)(4, 5, 2)]),
         cirq.Circuit([cirq.Y.controlled(2)(lq(4), lq(5), lq(2))]),
+    ),
+    (
+        _circuit.Circuit([_wavefunction_operations.ResetOperation(0)]),
+        cirq.Circuit([cirq.reset(lq(0))]),
     ),
 ]
 
