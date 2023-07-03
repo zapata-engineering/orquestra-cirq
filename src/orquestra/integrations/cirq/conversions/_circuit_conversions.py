@@ -200,7 +200,6 @@ EIGENGATE_ROTATIONS = {
 
 CIRQ_GATE_SPECIAL_CASES = {
     cirq.CSWAP: _builtin_gates.SWAP.controlled(1),
-    cirq.ResetChannel(): _wavefunction_operations.ResetOperation,
 }
 
 qubit_index = attrgetter("x")
