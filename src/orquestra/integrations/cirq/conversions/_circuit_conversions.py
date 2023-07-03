@@ -244,11 +244,6 @@ def _export_to_cirq(obj):
 
     Exporting of user-defined gates is atm not supported.
     """
-    if isinstance(obj, _wavefunction_operations.ResetOperation):
-        return cirq.ResetChannel()(*map(cirq.LineQubit, obj.qubit_indices))
-    # have to put this here because singledispatch does not support Type or Protocols
-    elif obj == _wavefunction_operations.ResetOperation:
-        return cirq.ResetChannel()
     raise NotImplementedError(f"{obj} can't be exported to Cirq object.")
 
 
@@ -289,6 +284,13 @@ def _export_circuit_to_cirq(circuit: _circuit.Circuit) -> cirq.Circuit:
     return cirq.Circuit(
         [_export_to_cirq(operation) for operation in circuit.operations]
     )
+
+
+@_export_to_cirq.register
+def _export_reset_operation_to_cirq(
+    operation: _wavefunction_operations.ResetOperation,
+) -> cirq.Gate:
+    return cirq.ResetChannel()(*map(cirq.LineQubit, operation.qubit_indices))
 
 
 def import_from_cirq(obj):

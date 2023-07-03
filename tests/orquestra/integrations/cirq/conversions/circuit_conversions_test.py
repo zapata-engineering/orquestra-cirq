@@ -154,10 +154,11 @@ def test_importing_gate_in_power_form_gives_expected_gate(orquestra_gate, cirq_g
 
 
 def test_importing_reset_gives_expected_gate():
-    reset_gate = cirq.ResetChannel()
+    cirq_reset_gate = cirq.ResetChannel()(lq(0))
+    orq_reset_gate = _wavefunction_operations.ResetOperation(0)
 
-    assert import_from_cirq(reset_gate) == _wavefunction_operations.ResetOperation
-    assert export_to_cirq(_wavefunction_operations.ResetOperation) == reset_gate
+    assert import_from_cirq(cirq_reset_gate) == orq_reset_gate
+    assert export_to_cirq(orq_reset_gate) == cirq_reset_gate
 
 
 # circuits ---------
