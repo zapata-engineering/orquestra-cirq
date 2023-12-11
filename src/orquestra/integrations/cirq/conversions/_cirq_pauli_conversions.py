@@ -4,7 +4,12 @@
 from typing import List, Optional, Union
 
 import cirq
-from orquestra.quantum.operators import PauliRepresentation
+import warnings
+
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    # Numpy throws deprecation warnings due to the scipy import
+    from orquestra.quantum.operators import PauliRepresentation
 
 
 def pauliop_to_cirq_paulisum(
