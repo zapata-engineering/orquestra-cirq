@@ -1,8 +1,13 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
-from openfermion import QubitOperator, SymbolicOperator  # type: ignore
-from orquestra.quantum.operators import PauliRepresentation, PauliSum, PauliTerm
+import warnings
+
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    # Numpy throws deprecation warnings due to the scipy import
+    from openfermion import QubitOperator, SymbolicOperator  # type: ignore
+    from orquestra.quantum.operators import PauliRepresentation, PauliSum, PauliTerm
 
 
 def from_openfermion(op: SymbolicOperator) -> PauliSum:
