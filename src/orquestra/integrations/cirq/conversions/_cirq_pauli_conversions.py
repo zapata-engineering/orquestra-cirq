@@ -4,7 +4,10 @@
 import warnings
 from typing import List, Optional, Union
 
-import cirq
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    # Pandas throws deprecation warning related to pyarrow
+    import cirq
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=DeprecationWarning)

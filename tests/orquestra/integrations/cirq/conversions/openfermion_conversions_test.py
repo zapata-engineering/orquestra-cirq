@@ -1,8 +1,15 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
+import warnings
+
 import pytest
-from openfermion import IsingOperator, QubitOperator  # type: ignore
+
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    # Pandas throws deprecation warning related to pyarrow
+    from openfermion import IsingOperator, QubitOperator  # type: ignore
+
 from openfermion.testing import random_qubit_operator  # type: ignore
 from orquestra.quantum.operators import PauliSum, PauliTerm
 
