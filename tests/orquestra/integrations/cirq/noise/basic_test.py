@@ -1,14 +1,13 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
+from orquestra.integrations.cirq._pandas_compat import preload_pandas_without_warnings
+
+preload_pandas_without_warnings()
+
 import os
-import warnings
 
-with warnings.catch_warnings():
-    warnings.filterwarnings("ignore", category=DeprecationWarning)
-    # Pandas throws deprecation warning related to pyarrow
-    import cirq
-
+import cirq
 import pytest
 
 from orquestra.integrations.cirq.noise.basic import (
