@@ -1,15 +1,11 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
-from orquestra.integrations.cirq._pandas_compat import preload_pandas_without_warnings
-
-preload_pandas_without_warnings()
-
 import os
 
-import cirq
 import pytest
 
+from orquestra.integrations.cirq._pandas_compat import preload_pandas_without_warnings
 from orquestra.integrations.cirq.noise.basic import (
     get_amplitude_damping,
     get_asymmetric_depolarize,
@@ -17,6 +13,9 @@ from orquestra.integrations.cirq.noise.basic import (
     get_phase_damping,
     load_noise_model_from_json,
 )
+
+preload_pandas_without_warnings()
+import cirq  # noqa: E402
 
 
 def remove_file_if_exists(filename):

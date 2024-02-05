@@ -1,21 +1,19 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
-from orquestra.integrations.cirq._pandas_compat import preload_pandas_without_warnings
-
-preload_pandas_without_warnings()
-
-import cirq
-
 import numpy as np
 import pytest
 from orquestra.quantum.circuits import GateOperation
 
+from orquestra.integrations.cirq._pandas_compat import preload_pandas_without_warnings
 from orquestra.integrations.cirq.conversions import import_from_cirq
 from orquestra.integrations.cirq.decompositions import (
     PowerGateToPhaseAndRotation,
     decompose_cirq_circuit,
 )
+
+preload_pandas_without_warnings()
+import cirq  # noqa: E402
 
 
 class TestDecompositionOfPowerGates:

@@ -1,18 +1,15 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
-from orquestra.integrations.cirq._pandas_compat import preload_pandas_without_warnings
-
-preload_pandas_without_warnings()
-
 import pytest
-
-from openfermion import IsingOperator, QubitOperator  # type: ignore
-
 from openfermion.testing import random_qubit_operator  # type: ignore
 from orquestra.quantum.operators import PauliSum, PauliTerm
 
+from orquestra.integrations.cirq._pandas_compat import preload_pandas_without_warnings
 from orquestra.integrations.cirq.conversions import from_openfermion, to_openfermion
+
+preload_pandas_without_warnings()
+from openfermion import IsingOperator, QubitOperator  # type: ignore # noqa: E402
 
 
 class TestOpenFermionConversions:

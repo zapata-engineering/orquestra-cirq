@@ -1,12 +1,6 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
-from orquestra.integrations.cirq._pandas_compat import preload_pandas_without_warnings
-
-preload_pandas_without_warnings()
-
-import cirq
-
 import numpy as np
 import pytest
 import sympy
@@ -18,11 +12,15 @@ from orquestra.quantum.circuits import (
 )
 from packaging.version import parse
 
+from orquestra.integrations.cirq._pandas_compat import preload_pandas_without_warnings
 from orquestra.integrations.cirq.conversions._circuit_conversions import (
     export_to_cirq,
     import_from_cirq,
     make_rotation_factory,
 )
+
+preload_pandas_without_warnings()
+import cirq  # noqa: E402
 
 # --------- gates ---------
 

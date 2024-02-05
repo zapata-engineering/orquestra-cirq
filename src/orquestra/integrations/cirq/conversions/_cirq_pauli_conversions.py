@@ -1,14 +1,13 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
-from .._pandas_compat import preload_pandas_without_warnings
-
-preload_pandas_without_warnings()
-
 import warnings
 from typing import List, Optional, Union
 
-import cirq
+from .._pandas_compat import preload_pandas_without_warnings
+
+preload_pandas_without_warnings()
+import cirq  # noqa: E402
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=DeprecationWarning)
