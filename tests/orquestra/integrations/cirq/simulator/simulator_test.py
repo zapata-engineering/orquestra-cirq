@@ -1,8 +1,16 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
+import warnings
+
 import numpy as np
 import pytest
+
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    # Pandas throws deprecation warning related to pyarrow
+    from cirq import depolarize
+
 from orquestra.quantum.api.circuit_runner_contracts import (
     CIRCUIT_RUNNER_CONTRACTS,
     STRICT_CIRCUIT_RUNNER_CONTRACTS,
@@ -15,11 +23,7 @@ from orquestra.quantum.api.wavefunction_simulator_contracts import (
 from orquestra.quantum.circuits import CNOT, Circuit, H, X
 from orquestra.quantum.operators import PauliSum
 
-from orquestra.integrations.cirq._pandas_compat import preload_pandas_without_warnings
 from orquestra.integrations.cirq.simulator import CirqSimulator, QSimSimulator
-
-preload_pandas_without_warnings()
-from cirq import depolarize  # noqa: E402
 
 
 @pytest.fixture(

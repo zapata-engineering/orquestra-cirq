@@ -4,10 +4,10 @@
 import warnings
 from typing import List, Optional, Union
 
-from .._pandas_compat import preload_pandas_without_warnings
-
-preload_pandas_without_warnings()
-import cirq  # noqa: E402
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    # Pandas throws deprecation warning related to pyarrow
+    import cirq
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -35,6 +35,7 @@ def pauliop_to_cirq_paulisum(
 
     converted_sum = cirq.PauliSum()
     for term in pauli_operator.terms:
+
         # Identity term
         if term.is_constant:
             converted_sum += term.coefficient
