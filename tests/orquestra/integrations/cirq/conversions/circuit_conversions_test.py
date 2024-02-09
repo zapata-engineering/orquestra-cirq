@@ -1,7 +1,13 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
-import cirq
+import warnings
+
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    # Pandas throws deprecation warning related to pyarrow
+    import cirq
+
 import numpy as np
 import pytest
 import sympy

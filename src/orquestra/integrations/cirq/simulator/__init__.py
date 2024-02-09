@@ -3,7 +3,11 @@
 ################################################################################
 from ._cirq_simulator import CirqSimulator
 
+__all__ = ["CirqSimulator"]
+
 try:
     from ._qsim_simulator import QSimSimulator
+
+    __all__.append("QSimSimulator")
 except ModuleNotFoundError:
     pass

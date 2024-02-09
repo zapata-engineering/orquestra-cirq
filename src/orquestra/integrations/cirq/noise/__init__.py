@@ -8,3 +8,11 @@ from .basic import (
     get_phase_damping,
     load_noise_model_from_json,
 )
+
+__all__ = [
+    "get_amplitude_damping",
+    "get_asymmetric_depolarize",
+    "get_depolarizing_channel",
+    "get_phase_damping",
+    "load_noise_model_from_json",
+]

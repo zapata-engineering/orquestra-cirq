@@ -1,10 +1,14 @@
 ################################################################################
 # © Copyright 2021-2022 Zapata Computing Inc.
 ################################################################################
-import json
 import os
+import warnings
 
-import cirq
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    # Pandas throws deprecation warning related to pyarrow
+    import cirq
+
 import pytest
 
 from orquestra.integrations.cirq.noise.basic import (
